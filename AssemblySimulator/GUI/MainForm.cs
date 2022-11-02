@@ -8,10 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AssemblySimulator {
-    public partial class Form1 : Form {
-        public Form1 () {
+using MyASMCompiler;
+
+namespace AssemblySimulator.GUI {
+    public partial class MainForm : Form {
+        public MainForm () {
             InitializeComponent ();
+
+            Compiler.test ("Tudor");
+
+            Compiler c = new Compiler ();
+            Console.WriteLine ($"sum = {c.sum(2, 3)}");
         }
     }
 }

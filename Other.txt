@@ -1,0 +1,3 @@
+project:
+	AssemblyCompiler is a Class Library
+	AssemblySimulator is a Winforms Project (main project)
