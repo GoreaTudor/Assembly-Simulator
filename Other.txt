@@ -1,3 +1,5 @@
 project:
-	AssemblyCompiler is a Class Library
+	AssemblyCompiler is a Class Library (.Net Framework)
 	AssemblySimulator is a Winforms Project (main project)
+
+AssemblyCompiler is added in AssemblySimulator refferences (static)
