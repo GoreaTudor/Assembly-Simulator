@@ -39,8 +39,9 @@ namespace MyASMCompiler {
         public override string ToString () {
 
             string text = "Code:";
+            int i = 0;
             foreach (var instr in instructions) {
-                text += $"\n{instr.LineNumber}: {instr.Name}  {instr.param1}  {instr.param2}  {instr.label}";
+                text += $"\ninstr {++i}: {instr.Name}  {instr.param1}  {instr.param2}  {instr.label}";
             }
 
             text += "\nLabels table:";

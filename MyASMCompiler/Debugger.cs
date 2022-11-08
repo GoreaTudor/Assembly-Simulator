@@ -29,7 +29,7 @@ namespace MyASMCompiler {
         /// </summary>
         /// <param name="code"></param>
         public static void start (CompiledCode code) {
-            HiddenCompiler.Debug_start (code);
+            ;
         }
 
 
@@ -39,7 +39,7 @@ namespace MyASMCompiler {
         /// <param name="instruction"></param>
         /// <returns> the status, if it's an output command it will return it's output too </returns>
         public static DebugStatus next (Instruction instruction) {
-            return HiddenCompiler.Debug_next (instruction);
+            return null;
         }
 
 
@@ -48,7 +48,7 @@ namespace MyASMCompiler {
         /// </summary>
         /// <returns></returns>
         public static DebugStatus stop () {
-            return HiddenCompiler.Debug_stop ();
+            return null;
         }
     }
 }
