@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MyASMCompiler.Errors;
+
 namespace MyASMCompiler {
 
     /// <summary>
@@ -37,8 +39,8 @@ namespace MyASMCompiler {
             CompiledCode compiledCode = new CompiledCode ();
 
             /// Each line looks like:
-            /// label1: instruction param1, param2, label2  # comment
-            /// where commas, label1 (with ':'), label2, param1, param2, comment are optional
+            /// label: instruction param1, param2  # comment
+            /// where commas, label (with ':'), param1, param2, comment are optional
 
             // for each line 
             for (int lineNr = 0; lineNr < lines.Length; lineNr++) {
@@ -184,6 +186,16 @@ namespace MyASMCompiler {
         ///     </item>
         ///     
         ///     <item>
+        ///         IO:
+        ///         <list type="bullet">
+        ///             <item> INPI dest => reads the next item, as an integer, and saves the value into dest </item>
+        ///             <item> INPC dest => reads the next item, as an character, and saves the value into dest </item>
+        ///             <item> OUTI src => displays the char value of the src contents </item>
+        ///             <item> OUTC src => displays the char value of the src contents </item>
+        ///         </list>
+        ///     </item>
+        ///     
+        ///     <item>
         ///         Other:
         ///         <list type="bullet">
         ///             <item> HLT => stops the code execution </item>
@@ -195,10 +207,21 @@ namespace MyASMCompiler {
         /// <param name="code"> the code of the instruction </param>
         /// <returns> an instruction based on the string </returns>
         private static Instruction toInstruction (string instructionText) {
-            Instruction instruction = new Instruction ();
             string[] tokens = instructionText.Split (new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            ;
+            string operation = tokens[0];
+            string param1 = (tokens.Length >= 2) ? tokens[1] : null;
+            string param2 = (tokens.Length >= 3) ? tokens[2] : null;
+
+            if (!HiddenCompiler.InstructionSet.Contains(operation)) {
+                throw new Sintax.InvalidOperationError($"Invalid operation \"{operation}\"");
+            }
+
+            Instruction instruction = new Instruction { 
+                Operation = operation,
+                Param1 = param1,
+                Param2 = param2
+            };
             
             return instruction;
         }
@@ -209,7 +232,7 @@ namespace MyASMCompiler {
         /// </summary>
         /// <param name="code"> the set of instructions that will be executed. </param>
         /// <returns> the output of the code </returns>
-        public static string run (CompiledCode code) {
+        public static string run (CompiledCode code, string input) {
             return null;
         }
     }
