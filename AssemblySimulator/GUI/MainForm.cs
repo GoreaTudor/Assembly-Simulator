@@ -13,6 +13,8 @@ using MyASMCompiler;
 namespace AssemblySimulator.GUI {
     public partial class MainForm : Form {
 
+        private CompiledCode compiledCode = null;
+
         public MainForm () {
             InitializeComponent ();
             init ();
@@ -34,10 +36,28 @@ namespace AssemblySimulator.GUI {
             this.txt_eventsLog.Text += $"{DateTime.Now}: {text}\r\n";
         }
 
+        private void drawLines (int nrOfLines) {
+            this.txt_lines.Text = "";
+
+            for (int i = 1; i <= nrOfLines; i++) {
+                this.txt_lines.Text += $"{i}:\r\n";
+            }
+        }
+
 
         #region Click Events
         private void btn_build_Click (object sender, EventArgs e) {
             log ("building...");
+            string[] lines = txt_CodeArea.Lines;
+            this.drawLines (lines.Length);
+
+            try {
+                compiledCode = Compiler.compile (lines);
+                log (compiledCode.ToString ());
+
+            } catch (Exception ex) {
+                log (ex.Message);
+            }
         }
 
         private void btn_run_Click (object sender, EventArgs e) {

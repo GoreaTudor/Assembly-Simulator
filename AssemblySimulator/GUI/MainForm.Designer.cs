@@ -59,6 +59,7 @@ namespace AssemblySimulator.GUI {
             this.txt_D = new System.Windows.Forms.TextBox();
             this.label_A = new System.Windows.Forms.Label();
             this.txt_eventsLog = new System.Windows.Forms.TextBox();
+            this.txt_lines = new System.Windows.Forms.TextBox();
             this.toolBar.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.panel_data.SuspendLayout();
@@ -192,13 +193,16 @@ namespace AssemblySimulator.GUI {
             // txt_CodeArea
             // 
             this.txt_CodeArea.AcceptsTab = true;
+            this.txt_CodeArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_CodeArea.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.txt_CodeArea.ForeColor = System.Drawing.Color.Black;
-            this.txt_CodeArea.Location = new System.Drawing.Point(12, 90);
+            this.txt_CodeArea.Location = new System.Drawing.Point(51, 90);
             this.txt_CodeArea.Multiline = true;
             this.txt_CodeArea.Name = "txt_CodeArea";
             this.txt_CodeArea.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_CodeArea.Size = new System.Drawing.Size(851, 434);
+            this.txt_CodeArea.Size = new System.Drawing.Size(812, 434);
             this.txt_CodeArea.TabIndex = 3;
             this.txt_CodeArea.Text = "Code goes here";
             // 
@@ -421,12 +425,25 @@ namespace AssemblySimulator.GUI {
             this.txt_eventsLog.TabIndex = 0;
             this.txt_eventsLog.Text = "Events Log (Console)";
             // 
+            // txt_lines
+            // 
+            this.txt_lines.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.txt_lines.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.txt_lines.Enabled = false;
+            this.txt_lines.Location = new System.Drawing.Point(4, 90);
+            this.txt_lines.Multiline = true;
+            this.txt_lines.Name = "txt_lines";
+            this.txt_lines.Size = new System.Drawing.Size(50, 434);
+            this.txt_lines.TabIndex = 5;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(1290, 680);
+            this.Controls.Add(this.txt_lines);
             this.Controls.Add(this.txt_eventsLog);
             this.Controls.Add(this.panel_data);
             this.Controls.Add(this.txt_CodeArea);
@@ -489,5 +506,6 @@ namespace AssemblySimulator.GUI {
         private System.Windows.Forms.TextBox txt_memoryValues;
         private System.Windows.Forms.TextBox txt_memoryAddress;
         private System.Windows.Forms.Label label_address;
+        private System.Windows.Forms.TextBox txt_lines;
     }
 }

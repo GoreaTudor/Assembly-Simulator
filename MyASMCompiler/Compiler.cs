@@ -86,10 +86,11 @@ namespace MyASMCompiler {
                     }
                 }
 
-                // generate instruction from text and add it to the compiled code
-                Instruction instruction = toInstruction (line_withoutCommentsAndLabels);
-                compiledCode.instructions.Add (instruction);
-
+                if (!String.IsNullOrWhiteSpace(line_withoutCommentsAndLabels)) {
+                    // generate instruction from text and add it to the compiled code
+                    Instruction instruction = toInstruction (line_withoutCommentsAndLabels);
+                    compiledCode.instructions.Add (instruction);
+                }
             } // END for each line
 
             return compiledCode;
@@ -207,14 +208,14 @@ namespace MyASMCompiler {
         /// <param name="code"> the code of the instruction </param>
         /// <returns> an instruction based on the string </returns>
         private static Instruction toInstruction (string instructionText) {
-            string[] tokens = instructionText.Split (new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] tokens = instructionText.Split (new char[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
-            string operation = tokens[0];
+            string operation = tokens[0].ToUpper();
             string param1 = (tokens.Length >= 2) ? tokens[1] : null;
             string param2 = (tokens.Length >= 3) ? tokens[2] : null;
 
             if (!HiddenCompiler.InstructionSet.Contains(operation)) {
-                throw new Sintax.InvalidOperationError($"Invalid operation \"{operation}\"");
+                throw new Sintax.InvalidOperationError($"Invalid operation \"{tokens[0]}\"");
             }
 
             Instruction instruction = new Instruction { 

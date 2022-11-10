@@ -41,12 +41,12 @@ namespace MyASMCompiler {
             string text = "Code:";
             int i = 0;
             foreach (var instr in instructions) {
-                text += $"\ninstr {++i}: {instr.Name}  {instr.param1}  {instr.param2}  {instr.label}";
+                text += $"\r\ninstr {i++}: {instr.ToString()}";
             }
 
-            text += "\nLabels table:";
+            text += "\r\nLabels table:";
             foreach (var pair in labelsTable) {
-                text += $"\n{pair.Key} - {pair.Value}";
+                text += $"\r\n{pair.Key} - {pair.Value}";
             }
 
             return text;

@@ -9,5 +9,9 @@ namespace MyASMCompiler {
         public string Operation { get; set; }
         public string Param1 { get; set; }
         public string Param2 { get; set; }
+
+        public override string ToString () {
+            return $"{this.Operation}  {this.Param1}  {this.Param2}";
+        }
     }
 }
