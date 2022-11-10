@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace MyASMCompiler {
     public class Instruction {
-        public string Name { get; set; }
-        public int param1 { get; set; }
-        public int param2 { get; set; }
+        public enum Type { Memory, Arithmetic, Logic, Shift, Branch, Set, Stack, IO, Other};
+
+        public string Operation { get; set; }
+        public string param1 { get; set; }
+        public string param2 { get; set; }
         public string label { get; set; }
     }
 }

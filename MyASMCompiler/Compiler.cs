@@ -16,9 +16,6 @@ namespace MyASMCompiler {
     /// </summary>
     public class Compiler {
 
-        private static char[] instruction_delim = { ' ', ',' };
-        private static char[] comment_delim = { '#' };
-
 
         /// <summary>
         /// Prepares the compiler with compiling and running parameters.
@@ -39,33 +36,76 @@ namespace MyASMCompiler {
         public static CompiledCode compile (string[] lines) {
             CompiledCode compiledCode = new CompiledCode ();
 
+            /// Each line looks like:
+            /// label1: instruction param1, param2, label2  # comment
+            /// where commas, label1 (with ':'), label2, param1, param2, comment are optional
+
             // for each line 
             for (int lineNr = 0; lineNr < lines.Length; lineNr++) {
                 string line = lines[lineNr];
 
-                // split line by comments
-                string[] tokens = line.Split (comment_delim, StringSplitOptions.RemoveEmptyEntries);
+                /// Comments ///
+                string line_withoutComments;
 
-                // if tokens contains an instruction
-                if ((tokens.Length == 2) ||                         // code (or blank space) and comment
-                    (tokens.Length == 1 && !line.Contains ('#'))    // only code (or blank space), no comment
-                ) {
-                    // generate instruction from code (or tokens[0])
-                    Instruction instruction = toInstruction (tokens[0]);
+                if (line.Contains ('#')) { // if contains a comment
+                    string[] tokens = line.Split ('#');
+                    line_withoutComments = tokens[0];
 
-                    // if it wasn't blank, then add it to instructions
-                    if (instruction != null) {
-                        compiledCode.instructions.Add (instruction);
+                } else {
+                    line_withoutComments = line;
+                }
+
+
+                /// Labels ///
+                string line_withoutCommentsAndLabels = null;
+                string possible_label = null;
+
+                if (line_withoutComments.Contains (':')) { // if contains a label
+                    string[] tokens = line_withoutComments.Split (':');
+
+                    possible_label = tokens[0];
+                    line_withoutCommentsAndLabels = tokens[1];
+
+                } else {
+                    line_withoutCommentsAndLabels = line_withoutComments;
+                }
+
+                if (possible_label != null) {
+                    // remove leading and trailing whitespace
+                    string possible_label_trimmed = possible_label.Trim ();
+
+                    // check if it is still label
+                    if (!(String.IsNullOrWhiteSpace (possible_label_trimmed) || possible_label_trimmed.Contains (' '))) {
+                        string label = possible_label_trimmed;
+
+                        // add the label to the table
+                        int nextInstrAddr = compiledCode.instructions.Count;
+                        compiledCode.labelsTable.Add (label, nextInstrAddr);
                     }
                 }
-            }
+
+                // generate instruction from text and add it to the compiled code
+                Instruction instruction = toInstruction (line_withoutCommentsAndLabels);
+                compiledCode.instructions.Add (instruction);
+
+            } // END for each line
 
             return compiledCode;
         }
 
 
         /// <summary>
-        /// Instruction set:
+        /// <para> Registers: </para>
+        /// <list type="bullet">
+        ///     <item> A </item>
+        ///     <item> B </item>
+        ///     <item> C </item>
+        ///     <item> D </item>
+        ///     <item> SP (Stack Pointer) </item>
+        ///     <item> BP (Base Pointer) </item>
+        /// </list>
+        /// 
+        /// <para> Instruction set: </para>
         /// <list type="number">
         ///     <item>
         ///         Memory:
@@ -143,22 +183,24 @@ namespace MyASMCompiler {
         ///         </list>
         ///     </item>
         ///     
+        ///     <item>
+        ///         Other:
+        ///         <list type="bullet">
+        ///             <item> HLT => stops the code execution </item>
+        ///         </list>
+        ///     </item>
         ///     
         /// </list>
         /// </summary>
         /// <param name="code"> the code of the instruction </param>
         /// <returns> an instruction based on the string </returns>
-        private static Instruction toInstruction (string code) {
-            // split the code into tokens
-            string[] tokens = code.Split (instruction_delim, StringSplitOptions.RemoveEmptyEntries);
+        private static Instruction toInstruction (string instructionText) {
+            Instruction instruction = new Instruction ();
+            string[] tokens = instructionText.Split (new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // check if code is blank
-            if (tokens.Length == 0) {
-                return null;
-            }
-
-            // TO DO: continue implementation
-            return null;
+            ;
+            
+            return instruction;
         }
 
 
@@ -169,10 +211,6 @@ namespace MyASMCompiler {
         /// <returns> the output of the code </returns>
         public static string run (CompiledCode code) {
             return null;
-        }
-
-        public static string hello () {
-            return "Hello";
         }
     }
 }

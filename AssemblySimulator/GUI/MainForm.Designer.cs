@@ -39,6 +39,11 @@ namespace AssemblySimulator.GUI {
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txt_CodeArea = new System.Windows.Forms.TextBox();
             this.panel_data = new System.Windows.Forms.Panel();
+            this.panel_memory = new System.Windows.Forms.Panel();
+            this.txt_memoryAddress = new System.Windows.Forms.TextBox();
+            this.btn_searchAddress = new System.Windows.Forms.Button();
+            this.label_address = new System.Windows.Forms.Label();
+            this.txt_memoryValues = new System.Windows.Forms.TextBox();
             this.panel_IO = new System.Windows.Forms.Panel();
             this.txt_output = new System.Windows.Forms.TextBox();
             this.label_output = new System.Windows.Forms.Label();
@@ -54,17 +59,12 @@ namespace AssemblySimulator.GUI {
             this.txt_D = new System.Windows.Forms.TextBox();
             this.label_A = new System.Windows.Forms.Label();
             this.txt_eventsLog = new System.Windows.Forms.TextBox();
-            this.panel_memory = new System.Windows.Forms.Panel();
-            this.btn_searchAddress = new System.Windows.Forms.Button();
-            this.txt_memoryValues = new System.Windows.Forms.TextBox();
-            this.txt_memoryAddress = new System.Windows.Forms.TextBox();
-            this.label_address = new System.Windows.Forms.Label();
             this.toolBar.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.panel_data.SuspendLayout();
+            this.panel_memory.SuspendLayout();
             this.panel_IO.SuspendLayout();
             this.panel_mainRegisters.SuspendLayout();
-            this.panel_memory.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolBar
@@ -150,37 +150,37 @@ namespace AssemblySimulator.GUI {
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.newToolStripMenuItem.Text = "New";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.openToolStripMenuItem.Text = "Open";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.saveAsToolStripMenuItem.Text = "Save As";
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.closeToolStripMenuItem.Text = "Close";
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // editToolStripMenuItem
@@ -213,6 +213,56 @@ namespace AssemblySimulator.GUI {
             this.panel_data.Name = "panel_data";
             this.panel_data.Size = new System.Drawing.Size(421, 597);
             this.panel_data.TabIndex = 4;
+            // 
+            // panel_memory
+            // 
+            this.panel_memory.Controls.Add(this.txt_memoryAddress);
+            this.panel_memory.Controls.Add(this.btn_searchAddress);
+            this.panel_memory.Controls.Add(this.label_address);
+            this.panel_memory.Controls.Add(this.txt_memoryValues);
+            this.panel_memory.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel_memory.Location = new System.Drawing.Point(0, 407);
+            this.panel_memory.Name = "panel_memory";
+            this.panel_memory.Size = new System.Drawing.Size(421, 190);
+            this.panel_memory.TabIndex = 10;
+            // 
+            // txt_memoryAddress
+            // 
+            this.txt_memoryAddress.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.txt_memoryAddress.Location = new System.Drawing.Point(99, 3);
+            this.txt_memoryAddress.Name = "txt_memoryAddress";
+            this.txt_memoryAddress.Size = new System.Drawing.Size(200, 27);
+            this.txt_memoryAddress.TabIndex = 5;
+            // 
+            // btn_searchAddress
+            // 
+            this.btn_searchAddress.Location = new System.Drawing.Point(305, 1);
+            this.btn_searchAddress.Name = "btn_searchAddress";
+            this.btn_searchAddress.Size = new System.Drawing.Size(75, 30);
+            this.btn_searchAddress.TabIndex = 2;
+            this.btn_searchAddress.Text = "Search";
+            this.btn_searchAddress.UseVisualStyleBackColor = true;
+            // 
+            // label_address
+            // 
+            this.label_address.AutoSize = true;
+            this.label_address.Location = new System.Drawing.Point(3, 6);
+            this.label_address.Name = "label_address";
+            this.label_address.Size = new System.Drawing.Size(90, 20);
+            this.label_address.TabIndex = 5;
+            this.label_address.Text = "Address: ";
+            // 
+            // txt_memoryValues
+            // 
+            this.txt_memoryValues.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.txt_memoryValues.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.txt_memoryValues.Location = new System.Drawing.Point(0, 40);
+            this.txt_memoryValues.Multiline = true;
+            this.txt_memoryValues.Name = "txt_memoryValues";
+            this.txt_memoryValues.ReadOnly = true;
+            this.txt_memoryValues.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_memoryValues.Size = new System.Drawing.Size(421, 150);
+            this.txt_memoryValues.TabIndex = 4;
             // 
             // panel_IO
             // 
@@ -371,60 +421,11 @@ namespace AssemblySimulator.GUI {
             this.txt_eventsLog.TabIndex = 0;
             this.txt_eventsLog.Text = "Events Log (Console)";
             // 
-            // panel_memory
-            // 
-            this.panel_memory.Controls.Add(this.txt_memoryAddress);
-            this.panel_memory.Controls.Add(this.btn_searchAddress);
-            this.panel_memory.Controls.Add(this.label_address);
-            this.panel_memory.Controls.Add(this.txt_memoryValues);
-            this.panel_memory.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel_memory.Location = new System.Drawing.Point(0, 407);
-            this.panel_memory.Name = "panel_memory";
-            this.panel_memory.Size = new System.Drawing.Size(421, 190);
-            this.panel_memory.TabIndex = 10;
-            // 
-            // btn_searchAddress
-            // 
-            this.btn_searchAddress.Location = new System.Drawing.Point(305, 1);
-            this.btn_searchAddress.Name = "btn_searchAddress";
-            this.btn_searchAddress.Size = new System.Drawing.Size(75, 30);
-            this.btn_searchAddress.TabIndex = 2;
-            this.btn_searchAddress.Text = "Search";
-            this.btn_searchAddress.UseVisualStyleBackColor = true;
-            // 
-            // txt_memoryValues
-            // 
-            this.txt_memoryValues.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.txt_memoryValues.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txt_memoryValues.Location = new System.Drawing.Point(0, 40);
-            this.txt_memoryValues.Multiline = true;
-            this.txt_memoryValues.Name = "txt_memoryValues";
-            this.txt_memoryValues.ReadOnly = true;
-            this.txt_memoryValues.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_memoryValues.Size = new System.Drawing.Size(421, 150);
-            this.txt_memoryValues.TabIndex = 4;
-            // 
-            // txt_memoryAddress
-            // 
-            this.txt_memoryAddress.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.txt_memoryAddress.Location = new System.Drawing.Point(99, 3);
-            this.txt_memoryAddress.Name = "txt_memoryAddress";
-            this.txt_memoryAddress.Size = new System.Drawing.Size(200, 27);
-            this.txt_memoryAddress.TabIndex = 5;
-            // 
-            // label_address
-            // 
-            this.label_address.AutoSize = true;
-            this.label_address.Location = new System.Drawing.Point(3, 6);
-            this.label_address.Name = "label_address";
-            this.label_address.Size = new System.Drawing.Size(90, 20);
-            this.label_address.TabIndex = 5;
-            this.label_address.Text = "Address: ";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(1290, 680);
             this.Controls.Add(this.txt_eventsLog);
             this.Controls.Add(this.panel_data);
@@ -440,12 +441,12 @@ namespace AssemblySimulator.GUI {
             this.menuBar.ResumeLayout(false);
             this.menuBar.PerformLayout();
             this.panel_data.ResumeLayout(false);
+            this.panel_memory.ResumeLayout(false);
+            this.panel_memory.PerformLayout();
             this.panel_IO.ResumeLayout(false);
             this.panel_IO.PerformLayout();
             this.panel_mainRegisters.ResumeLayout(false);
             this.panel_mainRegisters.PerformLayout();
-            this.panel_memory.ResumeLayout(false);
-            this.panel_memory.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
