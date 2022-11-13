@@ -97,134 +97,328 @@ namespace MyASMCompiler {
         }
 
 
-        /// <summary>
-        /// <para> Registers: </para>
-        /// <list type="bullet">
-        ///     <item> A </item>
-        ///     <item> B </item>
-        ///     <item> C </item>
-        ///     <item> D </item>
-        ///     <item> SP (Stack Pointer) </item>
-        ///     <item> BP (Base Pointer) </item>
-        /// </list>
-        /// 
-        /// <para> Instruction set: </para>
-        /// <list type="number">
-        ///     <item>
-        ///         Memory:
-        ///         <list type="bullet">
-        ///             <item> MOV dest, src => dest = src </item>
-        ///         </list>
-        ///     </item>
-        /// 
-        ///     <item>
-        ///         Arithmetic:
-        ///         <list type="bullet">
-        ///             <item> ADD dest, src => dest += src </item>
-        ///             <item> SUB dest, src => dest -= src </item>
-        ///             <item> MULT dest, src => dest *= src </item>
-        ///             <item> DIV dest, src => dest /= src </item>
-        ///             <item> MOD dest, src => dest %= src </item>
-        ///             <item> INC dest => dest ++ </item>
-        ///             <item> DEC dest => dest -- </item>
-        ///             <item> NEG dest => dest = -dest </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         Logic:
-        ///         <list type="bullet">
-        ///             <item> AND dest, src  => dest &= src </item>
-        ///             <item> OR dest, src => dest |= src </item>
-        ///             <item> XOR dest, src => dest ^= src </item>
-        ///             <item> NOT dest => dest = !dest </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         Shifts:
-        ///         <list type="bullet">
-        ///             <item> SHL dest => shifts contents one time to the left </item>
-        ///             <item> SHR dest => shifts contents one time to the right </item>
-        ///             <item> ROL dest => rotates contents one time to the left </item>
-        ///             <item> ROR dest => rotates contents one time to the right </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         Jumps and branches:
-        ///         <list type="bullet">
-        ///             <item> JMP label => jumps to label address </item>
-        ///             <item> BZ src, label => if src == 0 jumps to label address </item>
-        ///             <item> BNZ src, label => if src != 0 jumps to label addressv </item>
-        ///             <item> BLZ src, label => if src < 0 jumps to label address </item>
-        ///             <item> BLEZ src, label => if src <= 0 jumps to label address </item>
-        ///             <item> BGZ src, label => if src > 0 jumps to label address </item>
-        ///             <item> BGEZ src, label => if src >= 0 jumps to label address </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         Sets:
-        ///         <list type="bullet">
-        ///             <item> SZ src, dest => if src == 0 sets dest value to 1, else to 0 </item>
-        ///             <item> SNZ src, dest => if src != 0 sets dest value to 1, else to 0 </item>
-        ///             <item> SLZ src, dest => if src < 0 sets dest value to 1, else to 0 </item>
-        ///             <item> SLEZ src, dest => if src <= 0 sets dest value to 1, else to 0 </item>
-        ///             <item> SGZ src, dest => if src > 0 sets dest value to 1, else to 0 </item>
-        ///             <item> SGEZ src, dest => if src >= 0 sets dest value to 1, else to 0 </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         Functions and stack:
-        ///         <list type="bullet">
-        ///             <item> PUSH src => stack.push(src) </item>
-        ///             <item> POP dest => dest = stack.pop() </item>
-        ///             <item> CALL label => pushes to the stach the next instruction address, then jumps to label address </item>
-        ///             <item> RET => pops the stack, and returns execution to the instruction </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         IO:
-        ///         <list type="bullet">
-        ///             <item> INPI dest => reads the next item, as an integer, and saves the value into dest </item>
-        ///             <item> INPC dest => reads the next item, as an character, and saves the value into dest </item>
-        ///             <item> OUTI src => displays the char value of the src contents </item>
-        ///             <item> OUTC src => displays the char value of the src contents </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        ///     <item>
-        ///         Other:
-        ///         <list type="bullet">
-        ///             <item> HLT => stops the code execution </item>
-        ///         </list>
-        ///     </item>
-        ///     
-        /// </list>
-        /// </summary>
-        /// <param name="code"> the code of the instruction </param>
-        /// <returns> an instruction based on the string </returns>
-        private static Instruction toInstruction (string instructionText) {
+        protected static Instruction toInstruction (string instructionText) {
             string[] tokens = instructionText.Split (new char[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
-            string operation = tokens[0].ToUpper();
-            string param1 = (tokens.Length >= 2) ? tokens[1] : null;
-            string param2 = (tokens.Length >= 3) ? tokens[2] : null;
+            string operation_str = tokens[0].ToUpper();
+            string param1_str = (tokens.Length >= 2) ? tokens[1] : null;
+            string param2_str = (tokens.Length >= 3) ? tokens[2] : null;
 
-            if (!HiddenCompiler.InstructionSet.Contains(operation)) {
-                throw new Sintax.InvalidOperationError($"Invalid operation \"{tokens[0]}\"");
+            if (tokens.Length >= 4) {
+                throw new Sintax.SintaxError ("There are no instructions with more than 2 parameters");
             }
 
-            Instruction instruction = new Instruction { 
-                Operation = operation,
-                Param1 = param1,
-                Param2 = param2
+            Instruction instruction = new Instruction {
+                Operation = OpCodes.HLT,
+                Param1 = null,
+                Param2 = null,
+                Label = null
             };
+
+            switch (operation_str) {
+
+                case "HLT": {
+                    if (param1_str != null || param2_str != null) {
+                        throw new Sintax.InvalidParameterError ("HLT has no parameters");
+                    }
+                    instruction.Operation = OpCodes.HLT;
+                } break;
+
+                #region Arithmetic  ***** Being Implemented *****
+                case "ADD": {
+                    if (param1_str == null || param2_str == null) { throw new Sintax.InvalidParameterError ("ADD must have 2 parameters"); }
+                    Parameter param1 = getParamTypeAndValue (param1_str);
+
+                } break;
+
+                case "SUB": {
+                    ;
+
+                } break;
+
+                case "MULT": {
+                    ;
+
+                } break;
+
+                case "DIV": {
+                    ;
+
+                } break;
+
+                case "MOD": {
+                    ;
+
+                } break;
+
+                case "INC": {
+                    ;
+
+                } break;
+
+                case "DEC": {
+                    ;
+
+                }  break;
+
+                case "NEG": {
+                    ;
+
+                } break;
+                #endregion
+
+                #region Logic  ***Not Implemented Yet***
+                case "AND": {
+                    ;
+
+                } break;
+
+                case "OR": {
+                    ;
+
+                } break;
+
+                case "XOR": {
+                    ;
+
+                } break;
+
+                case "NOT": {
+                    ;
+
+                } break;
+                #endregion
+
+                #region Jumps and Branches  ***Not Implemented Yet***
+                case "JMP": {
+                    ;
+
+                } break;
+
+                case "JZ":
+                case "BZ": {
+                    ;
+
+                } break;
+
+                case "JNZ":
+                case "BNZ": {
+                    ;
+
+                } break;
+
+                case "JLZ":
+                case "BLZ": {
+                    ;
+
+                } break;
+
+                case "JLEZ":
+                case "BLEZ": {
+                    ;
+
+                } break;
+
+                case "JGZ":
+                case "BGZ": {
+                    ;
+
+                } break;
+
+                case "JGEZ":
+                case "BGEZ": {
+                    ;
+
+                } break;
+                #endregion
+
+                #region Sets  ***Not Implemented Yet***
+                case "SZ": {
+                    ;
+
+                } break;
+
+                case "SNZ": {
+                    ;
+
+                } break;
+
+                case "SLZ": {
+                    ;
+
+                } break;
+
+                case "SLEZ": {
+                    ;
+
+                } break;
+
+                case "SGZ": {
+                    ;
+
+                } break;
+
+                case "SGEZ": {
+                    ;
+
+                } break;
+                #endregion
+
+                #region Shifts  ***Not Implemented Yet***
+                case "SHL": {
+                    ;
+
+                } break;
+
+                case "SHR": {
+                    ;
+
+                } break;
+
+                case "ROL": {
+                    ;
+
+                } break;
+
+                case "ROR": {
+                    ;
+
+                } break;
+                #endregion
+
+                #region Stack and Functions  ***Not Implemented Yet***
+                case "PUSH": {
+                    ;
+
+                } break;
+
+                case "POP": {
+                    ;
+
+                } break;
+
+                case "PEEK": {
+                    ;
+
+                } break;
+
+                case "CALL": {
+                    ;
+
+                } break;
+
+                case "RET": {
+                    ;
+
+                } break;
+                #endregion
+
+                #region IO  ***Not Implemented Yet***
+                case "INPI": {
+                    ;
+
+                } break;
+
+                case "INPC": {
+                    ;
+
+                } break;
+
+                case "OUTI": {
+                    ;
+
+                } break;
+
+                case "OUTC": {
+                    ;
+
+                } break;
+                #endregion
+
+                default: {
+                    throw new Sintax.InvalidOperationError($"Invalid operation: {operation_str}");
+                }
+            }
             
             return instruction;
+        }
+
+        protected static Parameter getParamTypeAndValue (string param_str) {
+            switch (param_str[0]) {
+                case '[': { // [register] or [number]  -- no offset allowed
+                    string address = param_str.Substring(startIndex: 1, length: param_str.Length - 2);
+
+                    int? register = parseRegister (address);
+                    if (register.HasValue) {
+                        return new Parameter { Type = ParamType.pointer, Value = register.Value};
+                    }
+
+                    int? number = parseNumber (address);
+                    if (number.HasValue) {
+                        return new Parameter { Type = ParamType.address, Value = number.Value};
+                    }
+
+                    throw new Sintax.InvalidParameterError ("Invalid format for address type (with [])");
+                }
+
+                case '\'': { // 'C'
+                    string character = param_str.Substring(startIndex: 1, length: param_str.Length - 2);
+
+                    if (character.Length != 1) {
+                        throw new Sintax.InvalidParameterError ($"Invalid character type \'{character}\'");
+                    }
+
+                    return new Parameter { Type = ParamType.number, Value = character[0]};
+                }
+
+                default: { // register, number
+                    int? register = parseRegister (param_str);
+                    if (register.HasValue) {
+                        return new Parameter { Type = ParamType.register, Value = register.Value };
+                    }
+
+                    int? number = parseNumber (param_str);
+                    if (number.HasValue) {
+                        return new Parameter { Type = ParamType.number, Value = number.Value };
+                    }
+
+                    throw new Sintax.InvalidParameterError ("Invalid format for simple type (without [])");
+                }
+            }
+        }
+
+        protected static int? parseRegister (string input) {
+            switch (input) {
+                case "A":
+                    return 0;
+
+                case "B":
+                    return 1;
+
+                case "C":
+                    return 2;
+
+                case "D":
+                    return 3;
+
+                default:
+                    return null;
+            }
+        }
+
+        protected static int? parseNumber (string input) {
+            if (input.StartsWith("0x")) {                                   // Hexa
+                return Convert.ToInt32 (value: input, fromBase: 16);
+
+            } else if (input.StartsWith("b")) {                             // Binary
+                return Convert.ToInt32 (value: input.Substring(1), fromBase: 2);
+
+            } else if (HiddenCompiler.regex_validNumber.IsMatch(input)) {   // Decimal
+                return int.Parse (input);
+
+            } else {                                                        // Invalid format
+                return null;
+            }
         }
 
 

@@ -14,7 +14,7 @@ namespace MyASMCompiler {
         private static readonly string[] InstructionSet_Shifts       = { "SHL", "SHR", "ROL", "ROR" };
         private static readonly string[] InstructionSet_Branches     = { "JMP", "BZ", "BNZ", "BLZ", "BLEZ", "BGZ", "BGEZ" };
         private static readonly string[] InstructionSet_Sets         = { "SMP", "SZ", "SNZ", "SLZ", "SLEZ", "SGZ", "SGEZ" };
-        private static readonly string[] InstructionSet_Stack        = { "PUSH", "POP", "CALL", "RET" };
+        private static readonly string[] InstructionSet_Stack        = { "PUSH", "POP", "PEEK", "CALL", "RET" };
         private static readonly string[] InstructionSet_IO           = { "INPI", "INPC", "OUTI", "OUTC" };
         private static readonly string[] InstructionSet_Other        = { "HLT" };
 
@@ -32,10 +32,6 @@ namespace MyASMCompiler {
 
         public static readonly Regex regex_validParam = new Regex (@"^([A-D]|(SP)|(BP)|([%]{0,1}[0-9]+))$");
         public static readonly Regex regex_validLabel = new Regex (@"^[_a-zA-Z][_a-zA-Z0-9]+$");
-        public static readonly Regex regex_validNumber = new Regex (@"[0-9]+");
-
-        public static bool isBranch (string operation) {
-            return InstructionSet_Branches.Contains (operation);
-        }
+        public static readonly Regex regex_validNumber = new Regex (@"^[\d]+$");
     }
 }

@@ -10,7 +10,7 @@ namespace MyASMCompiler.UnitTests {
     public class DebuggerTests {
 
         [TestMethod]
-        public void runFirstTest () {
+        public void TestingWorks () {
             Assert.IsTrue (true);
         }
     }
