@@ -7,8 +7,8 @@ using MyASMCompiler;
 
 namespace MyASMCompiler.UnitTests {
     class CompilerChild : Compiler {
-        public static Parameter _getParamTypeAndValue (string param_str) {
-            return getParamTypeAndValue (param_str);
+        public static Parameter _getParamTypeAndValue (CompiledCode compiledCode, string param_str) {
+            return getParamTypeAndValue (compiledCode, param_str);
         }
 
         public static int? _parseNumber (string input) {

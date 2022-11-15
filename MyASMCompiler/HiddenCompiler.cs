@@ -19,7 +19,7 @@ namespace MyASMCompiler {
         private static readonly string[] InstructionSet_Other        = { "HLT" };
 
         public static readonly string[] InstructionSet = {
-            "MOV",                                                      // Memory
+            "MOV", "DEF",                                               // Memory
             "ADD", "SUB", "MULT", "DIV", "MOD", "INC", "DEC", "NEG",    // Arithmetic
             "AND", "OR", "XOR", "NOT",                                  // Logic
             "SHL", "SHR", "ROL", "ROR",                                 // Shift

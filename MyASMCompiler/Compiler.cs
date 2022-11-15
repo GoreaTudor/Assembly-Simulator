@@ -25,7 +25,7 @@ namespace MyASMCompiler {
         /// <param name="maxAddress"> represents the maximum address that can be used in the program </param>
         public static void setup (int maxAddress) {
             HiddenCompiler.setupProperties = new SetupProperties {
-                MaxAddress = maxAddress
+                MaxDataAddress = maxAddress
             };
         }
 
@@ -81,15 +81,18 @@ namespace MyASMCompiler {
                         string label = possible_label_trimmed;
 
                         // add the label to the table
-                        int nextInstrAddr = compiledCode.instructions.Count;
-                        compiledCode.labelsTable.Add (label, nextInstrAddr);
+                        int nextInstrAddr = compiledCode.Instructions.Count;
+                        compiledCode.InstructionLabels.Add (label, nextInstrAddr);
                     }
                 }
 
                 if (!String.IsNullOrWhiteSpace(line_withoutCommentsAndLabels)) {
                     // generate instruction from text and add it to the compiled code
-                    Instruction instruction = toInstruction (line_withoutCommentsAndLabels);
-                    compiledCode.instructions.Add (instruction);
+                    Instruction instruction = toInstruction (compiledCode, line_withoutCommentsAndLabels);
+
+                    if (instruction.Opcode != OpCodes.DEF) {
+                        compiledCode.Instructions.Add (instruction);
+                    }
                 }
             } // END for each line
 
@@ -97,7 +100,7 @@ namespace MyASMCompiler {
         }
 
 
-        protected static Instruction toInstruction (string instructionText) {
+        protected static Instruction toInstruction (CompiledCode compiledCode, string instructionText) {
             string[] tokens = instructionText.Split (new char[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
             string operation_str = tokens[0].ToUpper();
@@ -109,7 +112,7 @@ namespace MyASMCompiler {
             }
 
             Instruction instruction = new Instruction {
-                Operation = OpCodes.HLT,
+                Opcode = OpCodes.HLT,
                 Param1 = null,
                 Param2 = null,
                 Label = null
@@ -117,17 +120,67 @@ namespace MyASMCompiler {
 
             switch (operation_str) {
 
-                case "HLT": {
+                #region Memory
+                case "HLT": { // format: HLT
                     if (param1_str != null || param2_str != null) {
-                        throw new Sintax.InvalidParameterError ("HLT has no parameters");
+                        throw new Sintax.OperationError ("HLT has no parameters");
                     }
-                    instruction.Operation = OpCodes.HLT;
+                    instruction.Opcode = OpCodes.HLT;
                 } break;
+
+                case "DEF": { // format: DEF label, "String"/'C'/number     // has to be created before it is used
+                    if (param1_str == null || param2_str == null) {
+                        throw new Sintax.OperationError ("DEF has 2 parameters: <label> <\"String\"/\'C\'/number>");
+                    }
+                    instruction.Opcode = OpCodes.DEF;
+
+                    /// param 1 ///
+                    string label = (HiddenCompiler.regex_validLabel.IsMatch(param1_str)) ? param1_str : null;
+                    if (label == null) {
+                        throw new Sintax.ParameterError ($"Invalid label: {param1_str}");
+                    }
+                    compiledCode.DataLabels.Add (label, compiledCode.NextAddressPointer); // saves the label with the corresponding address
+
+                    /// param 2 ///
+                    if (HiddenCompiler.regex_validNumber.IsMatch(param2_str)) { // Number
+                        int number = int.Parse(param2_str);
+                        compiledCode.StartDataValues[compiledCode.NextAddressPointer ++] = number;
+
+                    } else if (param2_str[0] == '\'' ) { // 'C'
+                        if (param2_str[param2_str.Length - 1] != '\'') {
+                            throw new Sintax.ParameterError ("Missing \'");
+                        }
+
+                        string chars = param2_str.Substring (startIndex: 1, length: param2_str.Length - 2);
+                        if (chars.Length == 0) {
+                            throw new Sintax.ParameterError ("Empty character");
+                        } else if (chars.Length > 1) {
+                            throw new Sintax.ParameterError ("Too many characters, use String instead");
+                        }
+
+                        compiledCode.StartDataValues[compiledCode.NextAddressPointer ++] = chars[0];
+
+                    } else if (param2_str[0] == '\"') { // "String"
+                        if (param2_str[param2_str.Length - 1] != '\"') {
+                            throw new Sintax.ParameterError ("Missing \"");
+                        }
+
+                        string chars = param2_str.Substring (startIndex: 1, length: param2_str.Length - 2);
+                        foreach (char character in chars) {
+                            int number = (int) character;
+                            compiledCode.StartDataValues[compiledCode.NextAddressPointer ++] = number;
+                        }
+
+                    } else {
+                        throw new Sintax.ParameterError ($"DEF Second parameter should be: \"String\"/\'C\'/number, but is: {param2_str}");
+                    }
+                } break;
+                #endregion
 
                 #region Arithmetic  ***** Being Implemented *****
                 case "ADD": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.InvalidParameterError ("ADD must have 2 parameters"); }
-                    Parameter param1 = getParamTypeAndValue (param1_str);
+                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("ADD must have 2 parameters"); }
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
 
                 } break;
 
@@ -336,17 +389,21 @@ namespace MyASMCompiler {
                 #endregion
 
                 default: {
-                    throw new Sintax.InvalidOperationError($"Invalid operation: {operation_str}");
+                    throw new Sintax.OperationError($"Invalid operation: {operation_str}");
                 }
             }
             
             return instruction;
         }
 
-        protected static Parameter getParamTypeAndValue (string param_str) {
-            switch (param_str[0]) {
+        protected static Parameter getParamTypeAndValue (CompiledCode compiledCode, string input) {
+            switch (input[0]) {
                 case '[': { // [register] or [number]  -- no offset allowed
-                    string address = param_str.Substring(startIndex: 1, length: param_str.Length - 2);
+                    if (input[input.Length - 1] != ']') {
+                        throw new Sintax.ParameterError ("Missing ]");
+                    }
+
+                    string address = input.Substring(startIndex: 1, length: input.Length - 2);
 
                     int? register = parseRegister (address);
                     if (register.HasValue) {
@@ -358,31 +415,40 @@ namespace MyASMCompiler {
                         return new Parameter { Type = ParamType.address, Value = number.Value};
                     }
 
-                    throw new Sintax.InvalidParameterError ("Invalid format for address type (with [])");
+                    throw new Sintax.ParameterError ("Invalid format for address type (with [])");
                 }
 
                 case '\'': { // 'C'
-                    string character = param_str.Substring(startIndex: 1, length: param_str.Length - 2);
-
-                    if (character.Length != 1) {
-                        throw new Sintax.InvalidParameterError ($"Invalid character type \'{character}\'");
+                    if (input[input.Length - 1] != '\'') {
+                        throw new Sintax.ParameterError ("Missing \'");
                     }
 
-                    return new Parameter { Type = ParamType.number, Value = character[0]};
+                    string character = input.Substring(startIndex: 1, length: input.Length - 2);
+
+                    if (character.Length != 1) {
+                        throw new Sintax.ParameterError ($"Invalid character type \'{character}\'");
+                    }
+
+                    return new Parameter { Type = ParamType.number, Value = (int) character[0]};
                 }
 
-                default: { // register, number
-                    int? register = parseRegister (param_str);
+                default: { // register, number, data_label
+                    int? register = parseRegister (input);
                     if (register.HasValue) {
                         return new Parameter { Type = ParamType.register, Value = register.Value };
                     }
 
-                    int? number = parseNumber (param_str);
+                    int? number = parseNumber (input);
                     if (number.HasValue) {
                         return new Parameter { Type = ParamType.number, Value = number.Value };
                     }
 
-                    throw new Sintax.InvalidParameterError ("Invalid format for simple type (without [])");
+                    int? dataLabelValue = parseDataLabel (compiledCode, input);
+                    if (dataLabelValue.HasValue) {
+                        return new Parameter { Type = ParamType.number, Value = dataLabelValue.Value };
+                    }
+
+                    throw new Sintax.ParameterError ("Invalid format for simple type (without [])");
                 }
             }
         }
@@ -417,6 +483,18 @@ namespace MyASMCompiler {
                 return int.Parse (input);
 
             } else {                                                        // Invalid format
+                return null;
+            }
+        }
+
+        protected static int? parseDataLabel (CompiledCode compiledCode, string input) {
+            string label = (HiddenCompiler.regex_validLabel.IsMatch (input)) ? input : null;
+            if (label == null) { return null; }
+
+            try {
+                return compiledCode.DataLabels[label];
+
+            } catch (KeyNotFoundException) {
                 return null;
             }
         }

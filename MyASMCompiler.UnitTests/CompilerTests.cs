@@ -141,7 +141,7 @@ namespace MyASMCompiler.UnitTests {
         public void getParamTypeAndValue_register_register () {
             string input = "A";
             Parameter expected = new Parameter { Type = ParamType.register, Value = 0 };
-            Parameter actual = CompilerChild._getParamTypeAndValue (input);
+            Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
             Console.WriteLine ($"expected: {expected.ToString()}");
@@ -156,7 +156,7 @@ namespace MyASMCompiler.UnitTests {
         public void getParamTypeAndValue_pointer_pointer () {
             string input = "[B]";
             Parameter expected = new Parameter { Type = ParamType.pointer, Value = 1 };
-            Parameter actual = CompilerChild._getParamTypeAndValue (input);
+            Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
             Console.WriteLine ($"expected: {expected.ToString ()}");
@@ -171,7 +171,7 @@ namespace MyASMCompiler.UnitTests {
         public void getParamTypeAndValue_address_address () {
             string input = "[100]";
             Parameter expected = new Parameter { Type = ParamType.address, Value = 100 };
-            Parameter actual = CompilerChild._getParamTypeAndValue (input);
+            Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
             Console.WriteLine ($"expected: {expected.ToString ()}");
@@ -186,7 +186,7 @@ namespace MyASMCompiler.UnitTests {
         public void getParamTypeAndValue_number_number () {
             string input = "243";
             Parameter expected = new Parameter { Type = ParamType.number, Value = 243};
-            Parameter actual = CompilerChild._getParamTypeAndValue (input);
+            Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
             Console.WriteLine ($"expected: {expected.ToString ()}");
@@ -201,7 +201,7 @@ namespace MyASMCompiler.UnitTests {
         public void getParamTypeAndValue_character_character () {
             string input = "'C'";
             Parameter expected = new Parameter { Type = ParamType.number, Value = (int)'C'};
-            Parameter actual = CompilerChild._getParamTypeAndValue (input);
+            Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
             Console.WriteLine ($"expected: {expected.ToString ()}");
@@ -213,28 +213,12 @@ namespace MyASMCompiler.UnitTests {
 
         [TestMethod]
         [TestCategory ("getParamTypeAndValue")]
-        public void getParamTypeAndValue_badCondition1_throwsException () {
+        public void getParamTypeAndValue_badCondition_throwsException () {
             string input = "some text";
             Console.WriteLine ($"given: {input}");
 
             try {
-                CompilerChild._getParamTypeAndValue (input);
-                Assert.Fail (); // if it gets here, no exception was thrown
-
-            } catch (Exception e) {
-                Console.WriteLine (e.Message);
-                Assert.IsTrue (true);
-            }
-        }
-
-        [TestMethod]
-        [TestCategory ("getParamTypeAndValue")]
-        public void getParamTypeAndValue_badCondition2_throwsException () {
-            string input = "[address]";
-            Console.WriteLine ($"given: {input}");
-
-            try {
-                CompilerChild._getParamTypeAndValue (input);
+                CompilerChild._getParamTypeAndValue (null, input);
                 Assert.Fail (); // if it gets here, no exception was thrown
 
             } catch (Exception e) {

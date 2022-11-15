@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyASMCompiler {
     public class Instruction {
-        public OpCodes Operation { get; set; }
+        public OpCodes Opcode { get; set; }
         public int? Param1 { get; set; }
         public int? Param2 { get; set; }
         public string Label { get; set; }
@@ -16,7 +16,7 @@ namespace MyASMCompiler {
             string param2 = (Param2.HasValue) ? Param2.Value.ToString() : "-";
             string label = (Label != null) ? Label : "-";
 
-            return $"Opcode={this.Operation}  Param1={param1}  Param2={param2}  Label={label}";
+            return $"Opcode={this.Opcode}  Param1={param1}  Param2={param2}  Label={label}";
         }
     }
 
@@ -143,6 +143,8 @@ namespace MyASMCompiler {
         MOV_POINTER_REG,
         MOV_ADDRESS_NUMBER,
         MOV_ADDRESS_REG,
+
+        DEF,     // will not be included in the instructions
 
 
         ///// Arithmetic /////
