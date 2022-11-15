@@ -131,6 +131,7 @@ namespace MyASMCompiler {
     /// <param name="code"> the code of the instruction </param>
     /// <returns> an instruction based on the string </returns>
     public enum OpCodes {
+        DEF = -1,     // will not be included in the instructions
         HLT = 0,
 
 
@@ -143,8 +144,6 @@ namespace MyASMCompiler {
         MOV_POINTER_REG,
         MOV_ADDRESS_NUMBER,
         MOV_ADDRESS_REG,
-
-        DEF,     // will not be included in the instructions
 
 
         ///// Arithmetic /////
@@ -231,10 +230,10 @@ namespace MyASMCompiler {
 
 
         ///// Stack and Functions /////
-        PUSH_REG_NUMBER,
-        PUSH_REG_REG,
-        PUSH_REG_POINTER,
-        PUSH_REG_ADDRESS,
+        PUSH_NUMBER,
+        PUSH_REG,
+        PUSH_POINTER,
+        PUSH_ADDRESS,
 
         POP_REG,
 

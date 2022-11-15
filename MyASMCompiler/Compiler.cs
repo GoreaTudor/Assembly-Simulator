@@ -99,7 +99,6 @@ namespace MyASMCompiler {
             return compiledCode;
         }
 
-
         protected static Instruction toInstruction (CompiledCode compiledCode, string instructionText) {
             string[] tokens = instructionText.Split (new char[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -112,7 +111,7 @@ namespace MyASMCompiler {
             }
 
             Instruction instruction = new Instruction {
-                Opcode = OpCodes.HLT,
+                Opcode = OpCodes.DEF,
                 Param1 = null,
                 Param2 = null,
                 Label = null
@@ -177,68 +176,203 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region Arithmetic  ***** Being Implemented *****
+                #region Arithmetic
                 case "ADD": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("ADD must have 2 parameters"); }
-                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("ADD must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("ADD first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.ADD_REG_NUMBER; }
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.ADD_REG_REG; }
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.ADD_REG_POINTER; }
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.ADD_REG_ADDRESS; }
+                    else { throw new Sintax.ParameterError ("ADD second parameter type is Invalid."); }
                 } break;
 
                 case "SUB": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SUB must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("SUB first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.SUB_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.SUB_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.SUB_REG_POINTER; }
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.SUB_REG_ADDRESS; } 
+                    else { throw new Sintax.ParameterError ("SUB second parameter type is Invalid."); }
                 } break;
 
                 case "MULT": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("MULT must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("MULT first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.MULT_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.MULT_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.MULT_REG_POINTER; }
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.MULT_REG_ADDRESS; } 
+                    else { throw new Sintax.ParameterError ("MULT second parameter type is Invalid."); }
                 } break;
 
                 case "DIV": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("DIV must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("DIV first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.DIV_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.DIV_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.DIV_REG_POINTER; } 
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.DIV_REG_ADDRESS; }
+                    else { throw new Sintax.ParameterError ("DIV second parameter type is Invalid."); }
                 } break;
 
                 case "MOD": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("MOD must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("MOD first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.MOD_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.MOD_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.MOD_REG_POINTER; } 
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.MOD_REG_ADDRESS; } 
+                    else { throw new Sintax.ParameterError ("MOD second parameter type is Invalid."); }
                 } break;
 
                 case "INC": {
-                    ;
+                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("INC must have 1 parameter"); }
 
+                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("INC parameter must be a Register.");
+                    }
+                    instruction.Param1 = param.Value;
+                    instruction.Opcode = OpCodes.INC_REG;
                 } break;
 
                 case "DEC": {
-                    ;
+                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("DEC must have 1 parameter"); }
 
+                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("DEC parameter must be a Register.");
+                    }
+                    instruction.Param1 = param.Value;
+                    instruction.Opcode = OpCodes.DEC_REG;
                 }  break;
 
                 case "NEG": {
-                    ;
+                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("NEG must have 1 parameter"); }
 
+                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("NEG parameter must be a Register.");
+                    }
+                    instruction.Param1 = param.Value;
+                    instruction.Opcode = OpCodes.NEG_REG;
                 } break;
                 #endregion
 
-                #region Logic  ***Not Implemented Yet***
+                #region Logic
                 case "AND": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("AND must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("AND first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.AND_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.AND_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.AND_REG_POINTER; } 
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.AND_REG_ADDRESS; } 
+                    else { throw new Sintax.ParameterError ("AND second parameter type is Invalid."); }
                 } break;
 
                 case "OR": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("OR must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("OR first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.OR_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.OR_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.OR_REG_POINTER; } 
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.OR_REG_ADDRESS; } 
+                    else { throw new Sintax.ParameterError ("OR second parameter type is Invalid."); }
                 } break;
 
                 case "XOR": {
-                    ;
+                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("XOR must have 2 parameters"); }
 
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("XOR first parameter should be a Register.");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param2 = param2.Value;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.XOR_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.XOR_REG_REG; } 
+                    else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.XOR_REG_POINTER; } 
+                    else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.XOR_REG_ADDRESS; } 
+                    else { throw new Sintax.ParameterError ("XOR second parameter type is Invalid."); }
                 } break;
 
                 case "NOT": {
-                    ;
+                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("NOT must have 1 parameter"); }
 
+                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("NOT parameter must be a Register.");
+                    }
+                    instruction.Param1 = param.Value;
+                    instruction.Opcode = OpCodes.NOT_REG;
                 } break;
                 #endregion
 
