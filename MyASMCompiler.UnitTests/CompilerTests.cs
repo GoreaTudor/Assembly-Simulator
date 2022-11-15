@@ -9,10 +9,10 @@ namespace MyASMCompiler.UnitTests {
     [TestClass]
     public class CompilerTests {
 
-        [TestMethod]
+        /*[TestMethod]
         public void TestingWorks () {
             Assert.IsTrue (true);
-        }
+        }*/
 
         #region parseNumber
         [TestMethod]

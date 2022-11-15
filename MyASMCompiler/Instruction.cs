@@ -225,9 +225,6 @@ namespace MyASMCompiler {
         SHL_REG,
         SHR_REG,
 
-        ROL_REG,
-        ROR_REG,
-
 
         ///// Stack and Functions /////
         PUSH_NUMBER,
