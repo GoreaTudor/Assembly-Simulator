@@ -52,10 +52,17 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompilationChecker.cs" />
     <Compile Include="CompilerChild.cs" />
     <Compile Include="CompilerTests.cs" />
     <Compile Include="DebuggerTests.cs" />
+    <Compile Include="InstructionTests\ArithmeticTests.cs" />
+    <Compile Include="InstructionTests\IOTests.cs" />
+    <Compile Include="InstructionTests\JumpTests.cs" />
+    <Compile Include="InstructionTests\LogicTests.cs" />
+    <Compile Include="InstructionTests\MemoryTests.cs" />
+    <Compile Include="InstructionTests\SetTests.cs" />
+    <Compile Include="InstructionTests\ShiftTests.cs" />
+    <Compile Include="InstructionTests\StackTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

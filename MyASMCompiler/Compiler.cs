@@ -24,8 +24,12 @@ namespace MyASMCompiler {
         /// </summary>
         /// <param name="maxAddress"> represents the maximum address that can be used in the program </param>
         public static void setup (int maxAddress) {
+            int min_addressValue = 32;
+            int max_addressValue = 2048;
+            int default_addressValue = 256;
+
             HiddenCompiler.setupProperties = new SetupProperties {
-                MaxDataAddress = maxAddress
+                MaxDataAddress = (min_addressValue <= maxAddress && maxAddress <= max_addressValue) ? maxAddress : default_addressValue
             };
         }
 
@@ -95,13 +99,13 @@ namespace MyASMCompiler {
                             compiledCode.Instructions.Add (instruction);
                         }
                     } catch (Sintax.SintaxError error) {
-                        throw new Sintax.SintaxError (error.Message + $" at line {lineNr}");
+                        throw new Sintax.SintaxError (error.Message + $" at line {lineNr + 1}");
                     } catch (Sintax.OperationError error) {
-                        throw new Sintax.OperationError (error.Message + $" at line {lineNr}");
+                        throw new Sintax.OperationError (error.Message + $" at line {lineNr + 1}");
                     } catch (Sintax.ParameterError error) {
-                        throw new Sintax.ParameterError (error.Message + $" at line {lineNr}");
+                        throw new Sintax.ParameterError (error.Message + $" at line {lineNr + 1}");
                     } catch (Exception e) {
-                        throw new Exception (e.Message + $" at line {lineNr}");
+                        throw new Exception (e.Message + $" at line {lineNr + 1}");
                     }
                 }
             } // END for each line
@@ -111,15 +115,7 @@ namespace MyASMCompiler {
 
         // receives "instruction   param1 ,    param2"  -- can have many spaces in between
         protected static Instruction toInstruction (CompiledCode compiledCode, string instructionText) {
-            string[] tokens = instructionText.Split (new char[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-
-            string operation_str = tokens[0].ToUpper();
-            string param1_str = (tokens.Length >= 2) ? tokens[1] : null;
-            string param2_str = (tokens.Length >= 3) ? tokens[2] : null;
-
-            if (tokens.Length > 3) {
-                throw new Sintax.SintaxError ("There are no instructions with more than 2 parameters");
-            }
+            
 
             Instruction instruction = new Instruction {
                 Opcode = OpCodes.DEF,
@@ -127,6 +123,11 @@ namespace MyASMCompiler {
                 Param2 = null,
                 Label = null
             };
+
+            List <string> tokens = tokenize(instructionText);
+            string operation_str = tokens[0].ToUpper();
+            string param1_str = (tokens.Count >= 2) ? tokens[1] : null;
+            string param2_str = (tokens.Count >= 3) ? tokens[2] : null;
 
             switch (operation_str) {
 
@@ -157,61 +158,64 @@ namespace MyASMCompiler {
                     else { throw new Sintax.ParameterError ("MOV cannot have this types of parameters"); }
                 } break;
 
+                case "DB":
                 case "DEF": { // format: DEF label, "String"/'C'/number     // has to be created before it is used
-                    if (param1_str == null || param2_str == null) {
-                        throw new Sintax.OperationError ("DEF should have 2 parameters: <label> <\"String\"/\'C\'/number>");
+                    if (param1_str == null) {
+                        throw new Sintax.OperationError ("DEF/DB should have 1 or 2 parameters: <label> <\"String\"/\'C\'/number>");
                     }
                     instruction.Opcode = OpCodes.DEF;
 
                     /// param 1 ///
-                    string data_label = (HiddenCompiler.regex_validLabel.IsMatch(param1_str)) ? param1_str : null;
-                    if (data_label == null) {
-                        throw new Sintax.ParameterError ($"Invalid label: {param1_str}");
-                    }
+                    if (HiddenCompiler.regex_validNumber.IsMatch (param1_str)) {         // Number
+                        int number = int.Parse (param1_str);
+                        compiledCode.StartDataValues[compiledCode.NextAddressPointer++] = number;
 
-                    // check if the data_label already exists
-                    try {
-                        int dataAddress = compiledCode.DataLabels[data_label];
-                        throw new Sintax.SintaxError ($"Data label \"{data_label}\" (-> {dataAddress}) already exists");
-
-                    } catch (KeyNotFoundException) {
-                        // all good
-                    }
-                    // saves the label with the corresponding address
-                    compiledCode.DataLabels.Add (data_label, compiledCode.NextAddressPointer);
-
-                    /// param 2 ///
-                    if (HiddenCompiler.regex_validNumber.IsMatch(param2_str)) {         // Number
-                        int number = int.Parse(param2_str);
-                        compiledCode.StartDataValues[compiledCode.NextAddressPointer ++] = number;
-
-                    } else if (param2_str[0] == '\'' ) {                                // 'C'
-                        if (param2_str[param2_str.Length - 1] != '\'') {
+                    } else if (param1_str[0] == '\'') {                                // 'C'
+                        if (param1_str[param1_str.Length - 1] != '\'') {
                             throw new Sintax.ParameterError ("Missing \'");
                         }
 
-                        string chars = param2_str.Substring (startIndex: 1, length: param2_str.Length - 2);
+                        string chars = param1_str.Substring (startIndex: 1, length: param1_str.Length - 2);
                         if (chars.Length == 0) {
                             throw new Sintax.ParameterError ("Empty character");
                         } else if (chars.Length > 1) {
                             throw new Sintax.ParameterError ("Too many characters, use String instead");
                         }
 
-                        compiledCode.StartDataValues[compiledCode.NextAddressPointer ++] = chars[0];
+                        compiledCode.StartDataValues[compiledCode.NextAddressPointer++] = chars[0];
 
-                    } else if (param2_str[0] == '\"') {                                 // "String"
-                        if (param2_str[param2_str.Length - 1] != '\"') {
+                    } else if (param1_str[0] == '\"') {                                 // "String"
+                        if (param1_str[param1_str.Length - 1] != '\"') {
                             throw new Sintax.ParameterError ("Missing \"");
                         }
 
-                        string chars = param2_str.Substring (startIndex: 1, length: param2_str.Length - 2);
+                        string chars = param1_str.Substring (startIndex: 1, length: param1_str.Length - 2);
                         foreach (char character in chars) {
                             int number = (int) character;
-                            compiledCode.StartDataValues[compiledCode.NextAddressPointer ++] = number;
+                            compiledCode.StartDataValues[compiledCode.NextAddressPointer++] = number;
                         }
 
                     } else {
-                        throw new Sintax.ParameterError ($"DEF Second parameter should be: \"String\"/\'C\'/Number, but is: {param2_str}");
+                        throw new Sintax.ParameterError ($"DEF/DB Second parameter should be: \"String\"/\'C\'/Number, but is: {param2_str}");
+                    }
+
+                    /// param 2 ///
+                    if (param2_str != null) {
+                        string data_label = (HiddenCompiler.regex_validLabel.IsMatch (param2_str)) ? param2_str : null;
+                        if (data_label == null) {
+                            throw new Sintax.ParameterError ($"Invalid label: {param2_str}");
+                        }
+
+                        // check if the data_label already exists
+                        try {
+                            int dataAddress = compiledCode.DataLabels[data_label];
+                            throw new Sintax.SintaxError ($"Data label \"{data_label}\" (-> {dataAddress}) already exists");
+
+                        } catch (KeyNotFoundException) {
+                            // all good
+                        }
+                        // saves the label with the corresponding address
+                        compiledCode.DataLabels.Add (data_label, compiledCode.NextAddressPointer);
                     }
                 } break;
                 #endregion
@@ -670,6 +674,8 @@ namespace MyASMCompiler {
                     if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("PUSH should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param1 = param.Value;
+
                     if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.PUSH_NUMBER; }
                     else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.PUSH_REG; }
                     else if (param.Type == ParamType.pointer) { instruction.Opcode = OpCodes.PUSH_POINTER; }
@@ -681,11 +687,11 @@ namespace MyASMCompiler {
                     if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("POP should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
-                    if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("POP parameter must be a Register");
-                    }
                     instruction.Param1 = param.Value;
-                    instruction.Opcode = OpCodes.POP_REG;
+
+                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.POP_NUMBER; }
+                    else if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.POP_REG; }
+                    else { throw new Sintax.ParameterError ("POP parameter must be a Register or a Number"); }
                 } break;
 
                 case "PEEK": {
@@ -778,9 +784,82 @@ namespace MyASMCompiler {
             return instruction;
         }
 
+        /// <summary>
+        /// receives "instruction   param1 ,    param2"  -- can have many spaces in between, but no spaces at end
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns> a list of tokens </returns>
+        protected static List<string> tokenize (string text) {
+            List<string> tokens = new List<string> ();
+            const char inv_sign = (char) 0;
+            const int inv_begin = -1;
+
+            bool isSection = false;
+            char sign = inv_sign;
+            int begin = inv_begin;
+            int i = 0;
+
+            while (i < text.Length) {
+                if (isSection) {  // section is between "..." or '...'
+
+                    if (text[i] == sign) {  // current char is a string / char terminator, sign is NOT invalid
+                        tokens.Add (text.Substring (startIndex: begin, length: i - begin + 1));  // save section as token, including signs
+                        isSection = false;
+                        begin = inv_begin;
+                        sign = inv_sign;
+                    }
+                    // else don't do anything, just go through the section
+
+                } else {  // is not section
+
+                    if (text[i] == '\'' || text[i] == '\"') {  // beginning of a section
+
+                        if (begin != inv_begin) {  // something went wrong, begin should be invalid
+                            throw new Exception ("token not finished at the beginning of section");
+                        }
+
+                        begin = i;
+                        sign = text[i];
+                        isSection = true;
+
+                    } else {  // normal region, no section 
+
+                        if (text[i] == ' ' || text[i] == ',' || text[i] == '\t') {  // is a delimiter
+
+                            if (begin != inv_begin) {  // a token is finished
+                                tokens.Add (text.Substring (startIndex: begin, length: i - begin));
+                                begin = inv_begin;
+                            }
+                            // else don't do anything, just go to next character
+
+                        } else { // not a delimiter, then it's a part of a token
+
+                            if (begin == inv_begin) { // it's the beginning of the token
+                                begin = i;
+                            }
+                            // else don't do anything, just go to next character
+                        }
+                    }
+
+                }
+
+                i++;
+            }
+
+            if (isSection) { // unfinnished section
+                throw new Exception ("Unfinnished section");
+            }
+
+            if (begin != inv_begin) { // unfinished token, finish it,  i == text.Length
+                tokens.Add (text.Substring (startIndex: begin, length: i - begin));
+            }
+
+            return tokens;
+        }
+
         protected static Parameter getParamTypeAndValue (CompiledCode compiledCode, string input) {
             switch (input[0]) {
-                case '[': { // [register] or [number]  -- no offset allowed
+                case '[': { // [register], [number], [data_label]  -- no offset allowed
                     if (input[input.Length - 1] != ']') {
                         throw new Sintax.ParameterError ("Missing ]");
                     }
@@ -795,6 +874,11 @@ namespace MyASMCompiler {
                     int? number = parseNumber (address);
                     if (number.HasValue) {
                         return new Parameter { Type = ParamType.address, Value = number.Value};
+                    }
+
+                    int? dataLabelValue = parseDataLabel (compiledCode, input);
+                    if (dataLabelValue.HasValue) {
+                        return new Parameter { Type = ParamType.address, Value = dataLabelValue.Value };
                     }
 
                     throw new Sintax.ParameterError ("Invalid format for address type (with [])");
@@ -882,6 +966,45 @@ namespace MyASMCompiler {
         protected static string parseInstrLabel (string input) {
             // check if it's a valid label format
             return (HiddenCompiler.regex_validLabel.IsMatch (input)) ? input : null;
+        }
+
+        /// hasCharOrStr is true only for:  <DB "Hello World", hello>  or  <DB "Hello World">  or  <DB 'C', char>  or  <DB 'C'>
+        /// but not for:  <DB 12, nr>  or  <DB 0>   -- those will be split like normal instructions
+        /// same goes for DEF, since DB is equivalent to DEF
+        protected static (string str1, string str2, string str3, bool hasCharOrStr) mySplitter (string s) {
+            bool found = false;
+
+            int index_1 = 0; // index of first quotation mark / apostrophe
+            while (index_1 < s.Length && !found) {
+                if (s[index_1] == '\'' || s[index_1] == '\"') { found = true; } 
+                else { index_1++; }
+            }
+
+            if (! found) {  // no quotation mark or apostrophe found, cannot be specially split, only normal split
+                return (null, null, null, false);
+            }
+
+            found = false;
+            int index_2 = 0; // index of last quotation mark / apostrophe
+            while (index_2 < s.Length && !found) {
+                if (s[index_2] == '\'' || s[index_2] == '\"') { found = true; } 
+                else { index_2--; }
+            }
+
+            if (index_1 == index_2) { throw new Sintax.ParameterError ("Missing \' or \""); }
+
+            string str1 = s.Substring (startIndex: 0, length: index_1 - 0);
+            string str2 = s.Substring (startIndex: index_1, length: index_2 - index_1 + 1);
+
+            string str3 = null;
+            try {
+                str3 = s.Substring (startIndex: index_2 + 1);
+
+            } catch (Exception e) {
+
+            }
+
+            return (str1, str2, null, false);
         }
 
 

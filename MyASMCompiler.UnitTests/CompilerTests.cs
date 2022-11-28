@@ -9,14 +9,9 @@ namespace MyASMCompiler.UnitTests {
     [TestClass]
     public class CompilerTests {
 
-        /*[TestMethod]
-        public void TestingWorks () {
-            Assert.IsTrue (true);
-        }*/
-
         #region parseNumber
         [TestMethod]
-        [TestCategory("parseNumber")]
+        [TestCategory ("parseNumber")]
         public void parseNumber_hexa_int () {
             string hexaValue = "1f23e";
             int expected = Convert.ToInt32 (value: hexaValue, fromBase: 16);
@@ -45,7 +40,7 @@ namespace MyASMCompiler.UnitTests {
         [TestCategory ("parseNumber")]
         public void parseNumber_decimal_int () {
             string value = "1234";
-            int expected = int.Parse(value);
+            int expected = int.Parse (value);
             int? actual = CompilerChild._parseNumber ($"{value}");
 
             Console.WriteLine ($"expected: {expected}");
@@ -144,9 +139,9 @@ namespace MyASMCompiler.UnitTests {
             Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
-            Console.WriteLine ($"expected: {expected.ToString()}");
-            Console.WriteLine ($"actual: {actual.ToString()}");
-            Console.WriteLine ($"condition: {condition.ToString()}");
+            Console.WriteLine ($"expected: {expected.ToString ()}");
+            Console.WriteLine ($"actual: {actual.ToString ()}");
+            Console.WriteLine ($"condition: {condition.ToString ()}");
 
             Assert.IsTrue (condition);
         }
@@ -185,7 +180,7 @@ namespace MyASMCompiler.UnitTests {
         [TestCategory ("getParamTypeAndValue")]
         public void getParamTypeAndValue_number_number () {
             string input = "243";
-            Parameter expected = new Parameter { Type = ParamType.number, Value = 243};
+            Parameter expected = new Parameter { Type = ParamType.number, Value = 243 };
             Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
@@ -200,7 +195,7 @@ namespace MyASMCompiler.UnitTests {
         [TestCategory ("getParamTypeAndValue")]
         public void getParamTypeAndValue_character_character () {
             string input = "'C'";
-            Parameter expected = new Parameter { Type = ParamType.number, Value = (int)'C'};
+            Parameter expected = new Parameter { Type = ParamType.number, Value = (int) 'C' };
             Parameter actual = CompilerChild._getParamTypeAndValue (null, input);
             bool condition = (expected.Type == actual.Type && expected.Value == actual.Value);
 
@@ -226,6 +221,19 @@ namespace MyASMCompiler.UnitTests {
                 Assert.IsTrue (true);
             }
         }
+        #endregion
+
+        #region tokenize
+        /*[DataTestMethod]
+        [DataRow ("ADD A, 2", "ADD", "A", "2")]
+        public void tokenize_tests (string text, string[] tokens) {
+            Console.WriteLine ($"text: {text}");
+
+            Console.Write ($"tokens:  ");
+            foreach (string token in tokens) {
+                Console.Write (token + " ");
+            }
+        }*/
         #endregion
     }
 }

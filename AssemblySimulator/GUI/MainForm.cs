@@ -51,8 +51,11 @@ namespace AssemblySimulator.GUI {
             string[] lines = txt_CodeArea.Lines;
             this.drawLines (lines.Length);
 
+            Compiler.setup (maxAddress: 256);
+
             try {
                 compiledCode = Compiler.compile (lines);
+                log ("Project built.");
                 log (compiledCode.ToString ());
 
             } catch (Exception ex) {

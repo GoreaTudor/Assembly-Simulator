@@ -30,7 +30,7 @@ namespace MyASMCompiler {
         /// <summary>
         /// Starting values are defined using "DB" command, and will be present in Runtime Phase, to be used by the assembler.
         /// </summary>
-        public List<int> StartDataValues { get; set; }
+        public int[] StartDataValues { get; set; }
         public int NextAddressPointer { get; set; }
 
 
@@ -38,8 +38,12 @@ namespace MyASMCompiler {
             this.Instructions = new List <Instruction> ();
             this.InstructionLabels = new Dictionary <string, int> ();
             this.DataLabels = new Dictionary <string, int> ();
-            this.StartDataValues = new List <int> ();
+            this.StartDataValues = new int[HiddenCompiler.setupProperties.MaxDataAddress];
             this.NextAddressPointer = 0;
+
+            for (int i = 0; i < StartDataValues.Length; i ++) {
+                StartDataValues[i] = 0;
+            }
         }
 
 

@@ -232,6 +232,7 @@ namespace MyASMCompiler {
         PUSH_POINTER,
         PUSH_ADDRESS,
 
+        POP_NUMBER,
         POP_REG,
 
         PEEK_REG_NUMBER,

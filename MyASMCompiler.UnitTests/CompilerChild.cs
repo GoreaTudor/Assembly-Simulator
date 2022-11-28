@@ -18,5 +18,9 @@ namespace MyASMCompiler.UnitTests {
         public static int? _parseRegister (string input) {
             return parseRegister (input);
         }
+
+        public static List<string> _tokenize (string text) {
+            return tokenize (text);
+        }
     }
 }
