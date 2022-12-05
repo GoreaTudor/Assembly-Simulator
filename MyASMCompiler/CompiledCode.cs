@@ -48,7 +48,9 @@ namespace MyASMCompiler {
 
 
         public override string ToString () {
-            string text = "Code:";
+            string text = "code.ToString():";
+
+            text += "\r\nCode:";
             int i = 0;
             foreach (var instr in Instructions) {
                 text += $"\r\ninstr {i++}: {instr.ToString()}";

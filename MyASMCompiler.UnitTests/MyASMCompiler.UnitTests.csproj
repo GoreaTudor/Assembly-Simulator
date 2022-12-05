@@ -64,6 +64,7 @@
     <Compile Include="InstructionTests\ShiftTests.cs" />
     <Compile Include="InstructionTests\StackTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StackTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -165,6 +165,8 @@ namespace MyASMCompiler {
                     }
                     instruction.Opcode = OpCodes.DEF;
 
+                    int address = compiledCode.NextAddressPointer;
+
                     /// param 1 ///
                     if (HiddenCompiler.regex_validNumber.IsMatch (param1_str)) {         // Number
                         int number = int.Parse (param1_str);
@@ -215,7 +217,7 @@ namespace MyASMCompiler {
                             // all good
                         }
                         // saves the label with the corresponding address
-                        compiledCode.DataLabels.Add (data_label, compiledCode.NextAddressPointer);
+                        compiledCode.DataLabels.Add (data_label, address);
                     }
                 } break;
                 #endregion
@@ -876,7 +878,7 @@ namespace MyASMCompiler {
                         return new Parameter { Type = ParamType.address, Value = number.Value};
                     }
 
-                    int? dataLabelValue = parseDataLabel (compiledCode, input);
+                    int? dataLabelValue = parseDataLabel (compiledCode, address);
                     if (dataLabelValue.HasValue) {
                         return new Parameter { Type = ParamType.address, Value = dataLabelValue.Value };
                     }
