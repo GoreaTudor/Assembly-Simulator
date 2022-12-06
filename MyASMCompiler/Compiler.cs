@@ -22,14 +22,19 @@ namespace MyASMCompiler {
         /// <summary>
         /// Prepares the compiler with compiling and running parameters.
         /// </summary>
-        /// <param name="maxAddress"> represents the maximum address that can be used in the program </param>
-        public static void setup (int maxAddress) {
+        /// <param name="memorySize"> represents the maximum address that can be used in the program </param>
+        public static void setup (int memorySize, int stackSize) {
             int min_addressValue = 32;
             int max_addressValue = 2048;
             int default_addressValue = 256;
 
+            int min_stackSize = 32;
+            int max_stackSize = 2048;
+            int default_stackSize = 128;
+
             HiddenCompiler.setupProperties = new SetupProperties {
-                MaxDataAddress = (min_addressValue <= maxAddress && maxAddress <= max_addressValue) ? maxAddress : default_addressValue
+                MaxDataAddress = (min_addressValue <= memorySize && memorySize <= max_addressValue) ? memorySize : default_addressValue,
+                MaxStackLength = (min_stackSize <= stackSize && stackSize <= max_stackSize) ? stackSize : default_stackSize
             };
         }
 
@@ -115,7 +120,6 @@ namespace MyASMCompiler {
 
         // receives "instruction   param1 ,    param2"  -- can have many spaces in between
         protected static Instruction toInstruction (CompiledCode compiledCode, string instructionText) {
-            
 
             Instruction instruction = new Instruction {
                 Opcode = OpCodes.DEF,
@@ -696,21 +700,38 @@ namespace MyASMCompiler {
                     else { throw new Sintax.ParameterError ("POP parameter must be a Register or a Number"); }
                 } break;
 
-                case "PEEK": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("PEEK should have 2 parameters"); }
+                case "STR": {
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("STR should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("PEEK first parameter must be a Register");
+                        throw new Sintax.ParameterError ("STR first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.number) {
-                        throw new Sintax.ParameterError ("PEEK second parameter must be a Number");
+                        throw new Sintax.ParameterError ("STR second parameter must be a Number");
                     }
                     instruction.Param2 = param2.Value;
-                    instruction.Opcode = OpCodes.PEEK_REG_NUMBER;
+                    instruction.Opcode = OpCodes.STR_REG_NUMBER;
+                } break;
+
+                case "STW": {
+                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("STW should have 2 parameters"); }
+
+                    Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
+                    if (param1.Type != ParamType.register) {
+                        throw new Sintax.ParameterError ("STW first parameter must be a Register");
+                    }
+                    instruction.Param1 = param1.Value;
+
+                    Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
+                    if (param2.Type != ParamType.number) {
+                        throw new Sintax.ParameterError ("STW second parameter must be a Number");
+                    }
+                    instruction.Param2 = param2.Value;
+                    instruction.Opcode = OpCodes.STW_REG_NUMBER;
                 } break;
 
                 case "CALL": {
@@ -733,26 +754,15 @@ namespace MyASMCompiler {
                 #endregion
 
                 #region IO
-                case "INPI": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("INPI should have 1 parameter"); }
+                case "INP": {
+                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("INP should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("INPI parameter must be a Register");
+                        throw new Sintax.ParameterError ("INP parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
-                    instruction.Opcode = OpCodes.INPI_REG;
-                } break;
-
-                case "INPC": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("INPC should have 1 parameter"); }
-
-                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
-                    if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("INPC parameter must be a Register");
-                    }
-                    instruction.Param1 = param.Value;
-                    instruction.Opcode = OpCodes.INPC_REG;
+                    instruction.Opcode = OpCodes.INP_REG;
                 } break;
 
                 case "OUTI": {
@@ -938,10 +948,10 @@ namespace MyASMCompiler {
 
         protected static int? parseNumber (string input) {
             if (input.StartsWith("0x")) {                                   // Hexa
-                return Convert.ToInt32 (value: input, fromBase: 16);
+                return Convert.ToInt32 (value: input.Substring (startIndex: 2), fromBase: 16);
 
-            } else if (input.StartsWith("b")) {                             // Binary
-                return Convert.ToInt32 (value: input.Substring(1), fromBase: 2);
+            } else if (input.StartsWith("0b")) {                             // Binary
+                return Convert.ToInt32 (value: input.Substring (startIndex: 2), fromBase: 2);
 
             } else if (HiddenCompiler.regex_validNumber.IsMatch(input)) {   // Decimal
                 return int.Parse (input);

@@ -78,7 +78,7 @@ namespace MyASMCompiler.UnitTests {
             Console.WriteLine ("Stack: " + stack.ToString ());
 
             try {
-                int value = stack.peek (3);
+                int value = stack.read (3);
                 Console.WriteLine ($"Value: {value}");
                 Assert.AreEqual (1, value);
 
@@ -99,7 +99,7 @@ namespace MyASMCompiler.UnitTests {
             Console.WriteLine ("Stack: " + stack.ToString ());
 
             try {
-                int value = stack.peek (-10);
+                int value = stack.read (-10);
                 Assert.Fail ();
 
             } catch (Runtime.StackOverflow e) {
@@ -119,7 +119,7 @@ namespace MyASMCompiler.UnitTests {
             Console.WriteLine ("Stack: " + stack.ToString ());
 
             try {
-                int value = stack.peek (10);
+                int value = stack.read (10);
                 Assert.Fail ();
 
             } catch (Runtime.StackOverflow e) {

@@ -19,6 +19,8 @@ namespace AssemblySimulator.GUI {
             InitializeComponent ();
             init ();
 
+            Compiler.setup (memorySize: 256, stackSize: 128);
+
             log ("Project not built.");
         }
 
@@ -50,8 +52,6 @@ namespace AssemblySimulator.GUI {
             log ("building...");
             string[] lines = txt_CodeArea.Lines;
             this.drawLines (lines.Length);
-
-            Compiler.setup (maxAddress: 256);
 
             try {
                 compiledCode = Compiler.compile (lines);

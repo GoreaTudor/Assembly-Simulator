@@ -16,15 +16,18 @@ namespace MyASMCompiler {
 
         private static CompiledCode code = null;
         private static string input = null;
+        private static int inputIndex = 0;
         private static bool isRunning = false;
         private static int[] registers = new int[4];  // 4 registers
         private static int[] memory = null;
         private static Stack stack = null;
 
-        public static void start (CompiledCode compiledCode, string input_s) {
+        public static void start (CompiledCode compiledCode, string input) {
+            if (compiledCode == null) { throw new Exception ("Compiled code is null"); }
             if (isRunning) { throw new Exception ("Cannot Start: application already running"); }
             code = compiledCode;
-            input = input_s;
+            HiddenCompiler.input = (input != null) ? input : "";
+            inputIndex = 0;
             registers[0] = registers[1] = registers[2] = registers[3] = 0;
             memory = new int[setupProperties.MaxDataAddress];
             stack = new Stack (setupProperties.MaxStackLength);
@@ -55,14 +58,16 @@ namespace MyASMCompiler {
             string output = null;
 
             switch (opcode) {
-                #region HLT
+
+                #region Halt
                 case OpCodes.HLT: {
                     stop = true;
                 } break;
                 #endregion
 
 
-                #region ADD
+                /// Arithmetic ///
+                #region Add
                 case OpCodes.ADD_REG_NUMBER: { registers[param1] += param2; } break;
 
                 case OpCodes.ADD_REG_REG: { registers[param1] += registers[param2]; } break;
@@ -72,7 +77,7 @@ namespace MyASMCompiler {
                 case OpCodes.ADD_REG_ADDRESS: { registers[param1] += memory[param2]; } break;
                 #endregion
 
-                #region SUB
+                #region Subtract
                 case OpCodes.SUB_REG_NUMBER: { registers[param1] -= param2; } break;
 
                 case OpCodes.SUB_REG_REG: { registers[param1] -= registers[param2]; } break;
@@ -82,7 +87,7 @@ namespace MyASMCompiler {
                 case OpCodes.SUB_REG_ADDRESS: { registers[param1] -= memory[param2]; } break;
                 #endregion
 
-                #region MULT
+                #region Multiply
                 case OpCodes.MULT_REG_NUMBER: { registers[param1] *= param2; } break;
 
                 case OpCodes.MULT_REG_REG: { registers[param1] *= registers[param2]; } break;
@@ -92,7 +97,7 @@ namespace MyASMCompiler {
                 case OpCodes.MULT_REG_ADDRESS: { registers[param1] *= memory[param2]; } break;
                 #endregion
 
-                #region DIV
+                #region Divide
                 case OpCodes.DIV_REG_NUMBER: { registers[param1] /= param2; } break;
 
                 case OpCodes.DIV_REG_REG: { registers[param1] /= registers[param2]; } break;
@@ -102,7 +107,7 @@ namespace MyASMCompiler {
                 case OpCodes.DIV_REG_ADDRESS: { registers[param1] /= memory[param2]; } break;
                 #endregion
 
-                #region MOD
+                #region Modulo
                 case OpCodes.MOD_REG_NUMBER: { registers[param1] %= param2; } break;
 
                 case OpCodes.MOD_REG_REG: { registers[param1] %= registers[param2]; } break;
@@ -112,20 +117,21 @@ namespace MyASMCompiler {
                 case OpCodes.MOD_REG_ADDRESS: { registers[param1] %= memory[param2]; } break;
                 #endregion
 
-                #region INC
+                #region Increment
                 case OpCodes.INC_REG: { registers[param1] ++; } break;
                 #endregion
 
-                #region DEC
+                #region Decrement
                 case OpCodes.DEC_REG: { registers[param1] --; } break;
                 #endregion
 
-                #region NEG
+                #region Negate
                 case OpCodes.NEG_REG: { registers[param1] = -registers[param1]; } break;
                 #endregion
 
 
-                #region AND
+                /// Logic ///
+                #region And
                 case OpCodes.AND_REG_NUMBER: { registers[param1] &= param2; } break;
 
                 case OpCodes.AND_REG_REG: { registers[param1] &= registers[param2]; } break;
@@ -135,7 +141,7 @@ namespace MyASMCompiler {
                 case OpCodes.AND_REG_ADDRESS: { registers[param1] &= memory[param2]; } break;
                 #endregion
 
-                #region OR
+                #region Or
                 case OpCodes.OR_REG_NUMBER: { registers[param1] |= param2; } break;
 
                 case OpCodes.OR_REG_REG: { registers[param1] |= registers[param2]; } break;
@@ -145,7 +151,7 @@ namespace MyASMCompiler {
                 case OpCodes.OR_REG_ADDRESS: { registers[param1] |= memory[param2]; } break;
                 #endregion
 
-                #region XOR
+                #region Xor
                 case OpCodes.XOR_REG_NUMBER: { registers[param1] ^= param2; } break;
 
                 case OpCodes.XOR_REG_REG: { registers[param1] ^= registers[param2]; } break;
@@ -155,12 +161,13 @@ namespace MyASMCompiler {
                 case OpCodes.XOR_REG_ADDRESS: { registers[param1] ^= memory[param2]; } break;
                 #endregion
 
-                #region NOT
+                #region Not
                 case OpCodes.NOT_REG: { registers[param1] = ~registers[param1]; } break;
                 #endregion
 
 
-                #region JMP
+                /// Jumps & Branches ///
+                #region Jump
                 case OpCodes.JMP_LABEL: {
                     try {
                         nextInstrAddr = code.InstructionLabels[label];
@@ -171,7 +178,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region JZ
+                #region Jump if zero
                 case OpCodes.JZ_REG_LABEL: {
                     if (registers[param1] == 0) {
                         try {
@@ -184,7 +191,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region JNZ
+                #region Jump if not zero
                 case OpCodes.JNZ_REG_LABEL: {
                     if (registers[param1] != 0) {
                         try {
@@ -197,7 +204,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region JLZ
+                #region Jump if less than zero
                 case OpCodes.JLZ_REG_LABEL: {
                     if (registers[param1] < 0) {
                         try {
@@ -210,7 +217,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region JLEZ
+                #region Jump if less than or equal to zero
                 case OpCodes.JLEZ_REG_LABEL: {
                     if (registers[param1] <= 0) {
                         try {
@@ -223,7 +230,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region JGZ
+                #region Jump if greater than zero
                 case OpCodes.JGZ_REG_LABEL: {
                     if (registers[param1] > 0) {
                         try {
@@ -236,7 +243,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region JGEZ
+                #region Jump if greater than or equal to zero
                 case OpCodes.JGEZ_REG_LABEL: {
                     if (registers[param1] >= 0) {
                         try {
@@ -250,41 +257,44 @@ namespace MyASMCompiler {
                 #endregion
 
 
-                #region SZ
+                /// Sets ///
+                #region Set if zero
                 case OpCodes.SZ_REG_REG: { registers[param2] = (registers[param1] == 0) ? 1 : 0; } break;
                 #endregion
 
-                #region SNZ
+                #region Set if not zero
                 case OpCodes.SNZ_REG_REG: { registers[param2] = (registers[param1] != 0) ? 1 : 0; } break;
                 #endregion
 
-                #region SLZ
+                #region Set if less than zero
                 case OpCodes.SLZ_REG_REG: { registers[param2] = (registers[param1] < 0) ? 1 : 0; } break;
                 #endregion
 
-                #region SLEZ
+                #region Set if less than or equal to zero
                 case OpCodes.SLEZ_REG_REG: { registers[param2] = (registers[param1] <= 0) ? 1 : 0; } break;
                 #endregion
 
-                #region SGZ
+                #region Set if greater than zero
                 case OpCodes.SGZ_REG_REG: { registers[param2] = (registers[param1] > 0) ? 1 : 0; } break;
                 #endregion
 
-                #region SGEZ
+                #region Set if greater than or equal to zero
                 case OpCodes.SGEZ_REG_REG: { registers[param2] = (registers[param1] >= 0) ? 1 : 0; } break;
                 #endregion
 
 
-                #region SHL
+                /// Shifts ///
+                #region Shift left
                 case OpCodes.SHL_REG: { registers[param1] <<= 1; } break;
                 #endregion
 
-                #region SHR
+                #region Shift right
                 case OpCodes.SHR_REG: { registers[param1] >>= 1; } break;
                 #endregion
 
 
-                #region PUSH
+                /// Stack & Functions ///
+                #region Push
                 case OpCodes.PUSH_NUMBER: { stack.push (param1); } break;
 
                 case OpCodes.PUSH_REG: { stack.push (registers[param1]); } break;
@@ -294,7 +304,7 @@ namespace MyASMCompiler {
                 case OpCodes.PUSH_ADDRESS: { stack.push (memory[param1]); } break;
                 #endregion
 
-                #region POP
+                #region Pop
                 case OpCodes.POP_NUMBER: { 
                     for (int i = 0; i < param1; i ++) { stack.pop (); }
                 } break;
@@ -302,13 +312,15 @@ namespace MyASMCompiler {
                 case OpCodes.POP_REG: { registers[param1] = stack.pop (); } break;
                 #endregion
 
-                #region PEEK
-                case OpCodes.PEEK_REG_NUMBER: {
-                    registers[param1] = stack.peek (param2);
-                } break;
+                #region Stack read
+                case OpCodes.STR_REG_NUMBER: { registers[param1] = stack.read (param2); } break;
                 #endregion
 
-                #region CALL
+                #region Stack write
+                case OpCodes.STW_REG_NUMBER: { stack.write (registers[param1], param2); } break;
+                #endregion
+
+                #region Call
                 case OpCodes.CALL_LABEL: {
                     stack.push (currInstrAddr + 1);  // push return address
                     try {  // jump to label
@@ -320,7 +332,7 @@ namespace MyASMCompiler {
                 } break;
                 #endregion
 
-                #region RET
+                #region Return
                 case OpCodes.RET: {
                     nextInstrAddr = stack.pop ();  // pop return address
                     jumpWasMade = true;
@@ -328,26 +340,22 @@ namespace MyASMCompiler {
                 #endregion
 
 
-                #region INPI
-                case OpCodes.INPI_REG: {
-                    ;
+                /// IO ///
+                #region Input
+                case OpCodes.INP_REG: { 
+                    try { registers[param1] = (int) input[inputIndex++]; } 
+                    catch (IndexOutOfRangeException e) { throw new Runtime.InputError ("Input already finished"); }
                 } break;
                 #endregion
 
-                #region INPC
-                case OpCodes.INPC_REG: {
-                    ;
-                } break;
-                #endregion
-
-                #region OUTI
+                #region Output Integer
                 case OpCodes.OUTI_REG: {
                     output = (registers[param1]).ToString();
                     hasOutput = true;
                 } break;
                 #endregion
 
-                #region OUTC
+                #region Output Character
                 case OpCodes.OUTC_REG: {
                     try {
                         output = Convert.ToChar (registers[param1]).ToString ();
@@ -357,6 +365,7 @@ namespace MyASMCompiler {
                     }
                 } break;
                 #endregion
+
 
                 default: {
                     throw new Runtime.RuntimeError ("Invalid OpCode");

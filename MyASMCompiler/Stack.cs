@@ -36,13 +36,22 @@ namespace MyASMCompiler {
             }
         }
 
-        public int peek (int offset) {
+        public int read (int offset) {
             int position = SP - offset;
 
             if (position < 0) { throw new Runtime.StackUnderflow (); }
             if (position >= stack.Length) { throw new Runtime.StackOverflow (); }
 
             return stack[SP - offset];
+        }
+
+        public void write (int value, int offset) {
+            int position = SP - offset;
+
+            if (position < 0) { throw new Runtime.StackUnderflow (); }
+            if (position >= stack.Length) { throw new Runtime.StackOverflow (); }
+
+            stack[SP - offset] = value;
         }
 
         public override string ToString () {

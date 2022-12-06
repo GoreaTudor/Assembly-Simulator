@@ -10,7 +10,7 @@ namespace MyASMCompiler.UnitTests.InstructionTests {
     [TestCategory ("Logic")]
     public class LogicTests {
         bool Logic_1_param (string[] lines, OpCodes opCode) {
-            Compiler.setup (maxAddress: 32);
+            Compiler.setup (memorySize: 32, stackSize: 32);
             CompiledCode compiledCode = Compiler.compile (lines);
             Instruction instr = compiledCode.Instructions[0];
             Console.WriteLine (instr.ToString ());
@@ -23,7 +23,7 @@ namespace MyASMCompiler.UnitTests.InstructionTests {
         }
 
         bool Logic_2_param (string[] lines, OpCodes opCode) {
-            Compiler.setup (maxAddress: 32);
+            Compiler.setup (memorySize: 32, stackSize: 32);
             CompiledCode compiledCode = Compiler.compile (lines);
             Instruction instr = compiledCode.Instructions[0];
             Console.WriteLine (instr.ToString ());

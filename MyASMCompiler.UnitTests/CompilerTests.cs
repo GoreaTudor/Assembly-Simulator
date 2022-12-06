@@ -28,7 +28,7 @@ namespace MyASMCompiler.UnitTests {
         public void parseNumber_binary_int () {
             string binaryValue = "110101001";
             int expected = Convert.ToInt32 (value: binaryValue, fromBase: 2);
-            int? actual = CompilerChild._parseNumber ($"b{binaryValue}");
+            int? actual = CompilerChild._parseNumber ($"0b{binaryValue}");
 
             Console.WriteLine ($"expected: {expected}");
             Console.WriteLine ($"actual: {actual}");
