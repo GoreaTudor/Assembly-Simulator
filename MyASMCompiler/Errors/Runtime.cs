@@ -18,5 +18,16 @@ namespace MyASMCompiler.Errors {
             public StackUnderflow () : base ("Stack Underflow") { }
         }
 
+        public class InstrLabelNotFound : Exception {
+            public InstrLabelNotFound (string message) : base (message) { }
+        }
+
+        public class IntToCharOverflow : Exception {
+            public IntToCharOverflow (string message) : base (message) { }
+        }
+
+        public class InputError : Exception {
+            public InputError (string message) : base (message) { }
+        }
     }
 }

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="CompiledCode.cs" />
     <Compile Include="Compiler.cs" />
+    <Compile Include="CurrentStatus.cs" />
     <Compile Include="Debugger.cs" />
     <Compile Include="Errors\Runtime.cs" />
     <Compile Include="Errors\Sintax.cs" />
