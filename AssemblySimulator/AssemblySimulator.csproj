@@ -56,11 +56,20 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\ViewMemoryFrom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\ViewMemoryFrom.Designer.cs">
+      <DependentUpon>ViewMemoryFrom.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helper\Masks.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\ViewMemoryFrom.resx">
+      <DependentUpon>ViewMemoryFrom.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

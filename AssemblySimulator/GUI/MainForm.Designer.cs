@@ -25,9 +25,10 @@ namespace AssemblySimulator.GUI {
         /// </summary>
         private void InitializeComponent () {
             this.toolBar = new System.Windows.Forms.Panel();
-            this.btn_debug = new System.Windows.Forms.Button();
-            this.btn_run = new System.Windows.Forms.Button();
-            this.btn_build = new System.Windows.Forms.Button();
+            this.btn_stop = new System.Windows.Forms.Button();
+            this.btn_step = new System.Windows.Forms.Button();
+            this.btn_start = new System.Windows.Forms.Button();
+            this.btn_compile = new System.Windows.Forms.Button();
             this.menuBar = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,13 +38,21 @@ namespace AssemblySimulator.GUI {
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stepToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tooldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.inputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txt_CodeArea = new System.Windows.Forms.TextBox();
             this.panel_data = new System.Windows.Forms.Panel();
-            this.panel_memory = new System.Windows.Forms.Panel();
-            this.txt_memoryAddress = new System.Windows.Forms.TextBox();
-            this.btn_searchAddress = new System.Windows.Forms.Button();
-            this.label_address = new System.Windows.Forms.Label();
-            this.txt_memoryValues = new System.Windows.Forms.TextBox();
             this.panel_IO = new System.Windows.Forms.Panel();
             this.txt_output = new System.Windows.Forms.TextBox();
             this.label_output = new System.Windows.Forms.Label();
@@ -58,12 +67,14 @@ namespace AssemblySimulator.GUI {
             this.label_B = new System.Windows.Forms.Label();
             this.txt_D = new System.Windows.Forms.TextBox();
             this.label_A = new System.Windows.Forms.Label();
-            this.txt_eventsLog = new System.Windows.Forms.TextBox();
+            this.txt_console = new System.Windows.Forms.TextBox();
             this.txt_lines = new System.Windows.Forms.TextBox();
+            this.worker = new System.ComponentModel.BackgroundWorker();
+            this.showMemoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_viewMemory = new System.Windows.Forms.Button();
             this.toolBar.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.panel_data.SuspendLayout();
-            this.panel_memory.SuspendLayout();
             this.panel_IO.SuspendLayout();
             this.panel_mainRegisters.SuspendLayout();
             this.SuspendLayout();
@@ -71,9 +82,11 @@ namespace AssemblySimulator.GUI {
             // toolBar
             // 
             this.toolBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.toolBar.Controls.Add(this.btn_debug);
-            this.toolBar.Controls.Add(this.btn_run);
-            this.toolBar.Controls.Add(this.btn_build);
+            this.toolBar.Controls.Add(this.btn_viewMemory);
+            this.toolBar.Controls.Add(this.btn_stop);
+            this.toolBar.Controls.Add(this.btn_step);
+            this.toolBar.Controls.Add(this.btn_start);
+            this.toolBar.Controls.Add(this.btn_compile);
             this.toolBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.toolBar.Location = new System.Drawing.Point(0, 30);
             this.toolBar.Margin = new System.Windows.Forms.Padding(4);
@@ -81,44 +94,55 @@ namespace AssemblySimulator.GUI {
             this.toolBar.Size = new System.Drawing.Size(1290, 53);
             this.toolBar.TabIndex = 0;
             // 
-            // btn_debug
+            // btn_stop
             // 
-            this.btn_debug.BackColor = System.Drawing.Color.Lime;
-            this.btn_debug.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_debug.Location = new System.Drawing.Point(180, 4);
-            this.btn_debug.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_debug.Name = "btn_debug";
-            this.btn_debug.Size = new System.Drawing.Size(80, 40);
-            this.btn_debug.TabIndex = 2;
-            this.btn_debug.Text = "Debug";
-            this.btn_debug.UseVisualStyleBackColor = false;
-            this.btn_debug.Click += new System.EventHandler(this.btn_debug_Click);
+            this.btn_stop.BackColor = System.Drawing.Color.Red;
+            this.btn_stop.Location = new System.Drawing.Point(267, 4);
+            this.btn_stop.Name = "btn_stop";
+            this.btn_stop.Size = new System.Drawing.Size(80, 40);
+            this.btn_stop.TabIndex = 3;
+            this.btn_stop.Text = "Stop";
+            this.btn_stop.UseVisualStyleBackColor = false;
+            this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
             // 
-            // btn_run
+            // btn_step
             // 
-            this.btn_run.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.btn_run.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_run.Location = new System.Drawing.Point(92, 4);
-            this.btn_run.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_run.Name = "btn_run";
-            this.btn_run.Size = new System.Drawing.Size(80, 40);
-            this.btn_run.TabIndex = 1;
-            this.btn_run.Text = "Run";
-            this.btn_run.UseVisualStyleBackColor = false;
-            this.btn_run.Click += new System.EventHandler(this.btn_run_Click);
+            this.btn_step.BackColor = System.Drawing.Color.Lime;
+            this.btn_step.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_step.Location = new System.Drawing.Point(180, 4);
+            this.btn_step.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_step.Name = "btn_step";
+            this.btn_step.Size = new System.Drawing.Size(80, 40);
+            this.btn_step.TabIndex = 2;
+            this.btn_step.Text = "Step";
+            this.btn_step.UseVisualStyleBackColor = false;
+            this.btn_step.Click += new System.EventHandler(this.btn_step_Click);
             // 
-            // btn_build
+            // btn_start
             // 
-            this.btn_build.BackColor = System.Drawing.Color.Yellow;
-            this.btn_build.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_build.Location = new System.Drawing.Point(4, 4);
-            this.btn_build.Margin = new System.Windows.Forms.Padding(4);
-            this.btn_build.Name = "btn_build";
-            this.btn_build.Size = new System.Drawing.Size(80, 40);
-            this.btn_build.TabIndex = 0;
-            this.btn_build.Text = "Build";
-            this.btn_build.UseVisualStyleBackColor = false;
-            this.btn_build.Click += new System.EventHandler(this.btn_build_Click);
+            this.btn_start.BackColor = System.Drawing.Color.Lime;
+            this.btn_start.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_start.Location = new System.Drawing.Point(92, 4);
+            this.btn_start.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_start.Name = "btn_start";
+            this.btn_start.Size = new System.Drawing.Size(80, 40);
+            this.btn_start.TabIndex = 1;
+            this.btn_start.Text = "Start";
+            this.btn_start.UseVisualStyleBackColor = false;
+            this.btn_start.Click += new System.EventHandler(this.btn_start_Click);
+            // 
+            // btn_compile
+            // 
+            this.btn_compile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.btn_compile.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_compile.Location = new System.Drawing.Point(4, 4);
+            this.btn_compile.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_compile.Name = "btn_compile";
+            this.btn_compile.Size = new System.Drawing.Size(80, 40);
+            this.btn_compile.TabIndex = 0;
+            this.btn_compile.Text = "Compile";
+            this.btn_compile.UseVisualStyleBackColor = false;
+            this.btn_compile.Click += new System.EventHandler(this.btn_compile_Click);
             // 
             // menuBar
             // 
@@ -127,7 +151,10 @@ namespace AssemblySimulator.GUI {
             this.menuBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.editToolStripMenuItem});
+            this.editToolStripMenuItem,
+            this.projectToolStripMenuItem,
+            this.tooldToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuBar.Location = new System.Drawing.Point(0, 0);
             this.menuBar.Name = "menuBar";
             this.menuBar.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
@@ -153,42 +180,145 @@ namespace AssemblySimulator.GUI {
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
             this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // projectToolStripMenuItem
+            // 
+            this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buildToolStripMenuItem,
+            this.buildStartToolStripMenuItem,
+            this.startToolStripMenuItem,
+            this.stepToolStripMenuItem,
+            this.stopToolStripMenuItem});
+            this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
+            this.projectToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
+            this.projectToolStripMenuItem.Text = "Build";
+            // 
+            // buildToolStripMenuItem
+            // 
+            this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.buildToolStripMenuItem.Text = "Compile";
+            // 
+            // buildStartToolStripMenuItem
+            // 
+            this.buildStartToolStripMenuItem.Name = "buildStartToolStripMenuItem";
+            this.buildStartToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.buildStartToolStripMenuItem.Text = "Compile and Start";
+            // 
+            // startToolStripMenuItem
+            // 
+            this.startToolStripMenuItem.Name = "startToolStripMenuItem";
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.startToolStripMenuItem.Text = "Start";
+            // 
+            // stepToolStripMenuItem
+            // 
+            this.stepToolStripMenuItem.Name = "stepToolStripMenuItem";
+            this.stepToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.stepToolStripMenuItem.Text = "Stop";
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.stopToolStripMenuItem.Text = "Step into";
+            // 
+            // tooldToolStripMenuItem
+            // 
+            this.tooldToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearToolStripMenuItem,
+            this.showMemoryToolStripMenuItem});
+            this.tooldToolStripMenuItem.Name = "tooldToolStripMenuItem";
+            this.tooldToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
+            this.tooldToolStripMenuItem.Text = "Tools";
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.consoleToolStripMenuItem,
+            this.outputToolStripMenuItem,
+            this.inputToolStripMenuItem});
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.clearToolStripMenuItem.Text = "Clear";
+            // 
+            // consoleToolStripMenuItem
+            // 
+            this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
+            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.consoleToolStripMenuItem.Text = "Console";
+            this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
+            // 
+            // outputToolStripMenuItem
+            // 
+            this.outputToolStripMenuItem.Name = "outputToolStripMenuItem";
+            this.outputToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.outputToolStripMenuItem.Text = "Output";
+            this.outputToolStripMenuItem.Click += new System.EventHandler(this.outputToolStripMenuItem_Click);
+            // 
+            // inputToolStripMenuItem
+            // 
+            this.inputToolStripMenuItem.Name = "inputToolStripMenuItem";
+            this.inputToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
+            this.inputToolStripMenuItem.Text = "Input";
+            this.inputToolStripMenuItem.Click += new System.EventHandler(this.inputToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.documentationToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // documentationToolStripMenuItem
+            // 
+            this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
+            this.documentationToolStripMenuItem.Text = "Documentation";
+            this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
             // 
             // txt_CodeArea
             // 
@@ -203,13 +333,12 @@ namespace AssemblySimulator.GUI {
             this.txt_CodeArea.Name = "txt_CodeArea";
             this.txt_CodeArea.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txt_CodeArea.Size = new System.Drawing.Size(812, 434);
-            this.txt_CodeArea.TabIndex = 3;
+            this.txt_CodeArea.TabIndex = 0;
             this.txt_CodeArea.Text = "Code goes here";
             // 
             // panel_data
             // 
             this.panel_data.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.panel_data.Controls.Add(this.panel_memory);
             this.panel_data.Controls.Add(this.panel_IO);
             this.panel_data.Controls.Add(this.panel_mainRegisters);
             this.panel_data.Dock = System.Windows.Forms.DockStyle.Right;
@@ -217,56 +346,6 @@ namespace AssemblySimulator.GUI {
             this.panel_data.Name = "panel_data";
             this.panel_data.Size = new System.Drawing.Size(421, 597);
             this.panel_data.TabIndex = 4;
-            // 
-            // panel_memory
-            // 
-            this.panel_memory.Controls.Add(this.txt_memoryAddress);
-            this.panel_memory.Controls.Add(this.btn_searchAddress);
-            this.panel_memory.Controls.Add(this.label_address);
-            this.panel_memory.Controls.Add(this.txt_memoryValues);
-            this.panel_memory.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel_memory.Location = new System.Drawing.Point(0, 407);
-            this.panel_memory.Name = "panel_memory";
-            this.panel_memory.Size = new System.Drawing.Size(421, 190);
-            this.panel_memory.TabIndex = 10;
-            // 
-            // txt_memoryAddress
-            // 
-            this.txt_memoryAddress.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.txt_memoryAddress.Location = new System.Drawing.Point(99, 3);
-            this.txt_memoryAddress.Name = "txt_memoryAddress";
-            this.txt_memoryAddress.Size = new System.Drawing.Size(200, 27);
-            this.txt_memoryAddress.TabIndex = 5;
-            // 
-            // btn_searchAddress
-            // 
-            this.btn_searchAddress.Location = new System.Drawing.Point(305, 1);
-            this.btn_searchAddress.Name = "btn_searchAddress";
-            this.btn_searchAddress.Size = new System.Drawing.Size(75, 30);
-            this.btn_searchAddress.TabIndex = 2;
-            this.btn_searchAddress.Text = "Search";
-            this.btn_searchAddress.UseVisualStyleBackColor = true;
-            // 
-            // label_address
-            // 
-            this.label_address.AutoSize = true;
-            this.label_address.Location = new System.Drawing.Point(3, 6);
-            this.label_address.Name = "label_address";
-            this.label_address.Size = new System.Drawing.Size(90, 20);
-            this.label_address.TabIndex = 5;
-            this.label_address.Text = "Address: ";
-            // 
-            // txt_memoryValues
-            // 
-            this.txt_memoryValues.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.txt_memoryValues.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txt_memoryValues.Location = new System.Drawing.Point(0, 40);
-            this.txt_memoryValues.Multiline = true;
-            this.txt_memoryValues.Name = "txt_memoryValues";
-            this.txt_memoryValues.ReadOnly = true;
-            this.txt_memoryValues.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_memoryValues.Size = new System.Drawing.Size(421, 150);
-            this.txt_memoryValues.TabIndex = 4;
             // 
             // panel_IO
             // 
@@ -411,19 +490,19 @@ namespace AssemblySimulator.GUI {
             this.label_A.TabIndex = 4;
             this.label_A.Text = "A: ";
             // 
-            // txt_eventsLog
+            // txt_console
             // 
-            this.txt_eventsLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.txt_eventsLog.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txt_eventsLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.txt_eventsLog.Location = new System.Drawing.Point(0, 530);
-            this.txt_eventsLog.Multiline = true;
-            this.txt_eventsLog.Name = "txt_eventsLog";
-            this.txt_eventsLog.ReadOnly = true;
-            this.txt_eventsLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_eventsLog.Size = new System.Drawing.Size(869, 150);
-            this.txt_eventsLog.TabIndex = 0;
-            this.txt_eventsLog.Text = "Events Log (Console)";
+            this.txt_console.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.txt_console.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.txt_console.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.txt_console.Location = new System.Drawing.Point(0, 530);
+            this.txt_console.Multiline = true;
+            this.txt_console.Name = "txt_console";
+            this.txt_console.ReadOnly = true;
+            this.txt_console.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txt_console.Size = new System.Drawing.Size(869, 150);
+            this.txt_console.TabIndex = 3;
+            this.txt_console.Text = "Console (Events Log)";
             // 
             // txt_lines
             // 
@@ -437,6 +516,33 @@ namespace AssemblySimulator.GUI {
             this.txt_lines.Size = new System.Drawing.Size(50, 434);
             this.txt_lines.TabIndex = 5;
             // 
+            // worker
+            // 
+            this.worker.WorkerReportsProgress = true;
+            this.worker.WorkerSupportsCancellation = true;
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.worker_DoWork);
+            this.worker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_ProgressChanged);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
+            // 
+            // showMemoryToolStripMenuItem
+            // 
+            this.showMemoryToolStripMenuItem.Name = "showMemoryToolStripMenuItem";
+            this.showMemoryToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.showMemoryToolStripMenuItem.Text = "Show Memory";
+            this.showMemoryToolStripMenuItem.Click += new System.EventHandler(this.showMemoryToolStripMenuItem_Click);
+            // 
+            // btn_viewMemory
+            // 
+            this.btn_viewMemory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_viewMemory.BackColor = System.Drawing.Color.Yellow;
+            this.btn_viewMemory.Location = new System.Drawing.Point(743, 4);
+            this.btn_viewMemory.Name = "btn_viewMemory";
+            this.btn_viewMemory.Size = new System.Drawing.Size(120, 40);
+            this.btn_viewMemory.TabIndex = 4;
+            this.btn_viewMemory.Text = "View Memory";
+            this.btn_viewMemory.UseVisualStyleBackColor = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -444,7 +550,7 @@ namespace AssemblySimulator.GUI {
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(1290, 680);
             this.Controls.Add(this.txt_lines);
-            this.Controls.Add(this.txt_eventsLog);
+            this.Controls.Add(this.txt_console);
             this.Controls.Add(this.panel_data);
             this.Controls.Add(this.txt_CodeArea);
             this.Controls.Add(this.toolBar);
@@ -453,13 +559,11 @@ namespace AssemblySimulator.GUI {
             this.MainMenuStrip = this.menuBar;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
-            this.Text = "MainForm";
+            this.Text = "MyASM IDE";
             this.toolBar.ResumeLayout(false);
             this.menuBar.ResumeLayout(false);
             this.menuBar.PerformLayout();
             this.panel_data.ResumeLayout(false);
-            this.panel_memory.ResumeLayout(false);
-            this.panel_memory.PerformLayout();
             this.panel_IO.ResumeLayout(false);
             this.panel_IO.PerformLayout();
             this.panel_mainRegisters.ResumeLayout(false);
@@ -472,9 +576,9 @@ namespace AssemblySimulator.GUI {
         #endregion
 
         private System.Windows.Forms.Panel toolBar;
-        private System.Windows.Forms.Button btn_build;
-        private System.Windows.Forms.Button btn_debug;
-        private System.Windows.Forms.Button btn_run;
+        private System.Windows.Forms.Button btn_compile;
+        private System.Windows.Forms.Button btn_step;
+        private System.Windows.Forms.Button btn_start;
         private System.Windows.Forms.MenuStrip menuBar;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
@@ -500,12 +604,24 @@ namespace AssemblySimulator.GUI {
         private System.Windows.Forms.Label label_output;
         private System.Windows.Forms.TextBox txt_output;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.TextBox txt_eventsLog;
-        private System.Windows.Forms.Panel panel_memory;
-        private System.Windows.Forms.Button btn_searchAddress;
-        private System.Windows.Forms.TextBox txt_memoryValues;
-        private System.Windows.Forms.TextBox txt_memoryAddress;
-        private System.Windows.Forms.Label label_address;
+        private System.Windows.Forms.TextBox txt_console;
         private System.Windows.Forms.TextBox txt_lines;
+        private System.Windows.Forms.Button btn_stop;
+        private System.Windows.Forms.ToolStripMenuItem projectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildStartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stepToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem documentationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tooldToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem outputToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem inputToolStripMenuItem;
+        private System.ComponentModel.BackgroundWorker worker;
+        private System.Windows.Forms.ToolStripMenuItem showMemoryToolStripMenuItem;
+        private System.Windows.Forms.Button btn_viewMemory;
     }
 }
