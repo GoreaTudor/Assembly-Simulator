@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace MyASMCompiler {
     public class CurrentStatus {
-        public int nextInstructionAddress { get; set; }
         public int[] registers { get; set; }
         public int[] memory { get; set; }
         public Stack stack { get; set; }
