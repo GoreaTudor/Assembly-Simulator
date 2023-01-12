@@ -16,5 +16,5 @@ namespace MyASMCompiler {
 
     public enum ParamType {
         none, register, pointer, address, number
-    }
+    } //         A        [A]     [100]    100
 }

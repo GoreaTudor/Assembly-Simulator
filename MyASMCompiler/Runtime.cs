@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 using MyASMCompiler.Errors;
 
 namespace MyASMCompiler {
-    class HiddenCompiler {
+    class Runtime {
         public static SetupProperties setupProperties { get; set; }
-
-        public static readonly Regex regex_validParam = new Regex (@"^([A-D]|(SP)|(BP)|([%]{0,1}[0-9]+))$");
-        public static readonly Regex regex_validLabel = new Regex (@"^[_a-zA-Z][\._a-zA-Z0-9]+$");
-        public static readonly Regex regex_validNumber = new Regex (@"^[\d]+$");
 
         private static CompiledCode code = null;
         private static string input = null;
@@ -26,7 +22,7 @@ namespace MyASMCompiler {
             if (compiledCode == null) { throw new Exception ("Compiled code is null"); }
             if (isRunning) { throw new Exception ("Cannot Start: application already running"); }
             code = compiledCode;
-            HiddenCompiler.input = (input != null) ? input : "";
+            Runtime.input = (input != null) ? input : "";
             inputIndex = 0;
             registers[0] = registers[1] = registers[2] = registers[3] = 0;
             memory = new int[setupProperties.MaxDataAddress];
@@ -173,7 +169,7 @@ namespace MyASMCompiler {
                         nextInstrAddr = code.InstructionLabels[label];
                         jumpWasMade = true;
                     } catch (KeyNotFoundException e) {
-                        throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                        throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                     }
                 } break;
                 #endregion
@@ -185,7 +181,7 @@ namespace MyASMCompiler {
                             nextInstrAddr = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 } break;
@@ -198,7 +194,7 @@ namespace MyASMCompiler {
                             nextInstrAddr = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 } break;
@@ -211,7 +207,7 @@ namespace MyASMCompiler {
                             nextInstrAddr = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 } break;
@@ -224,7 +220,7 @@ namespace MyASMCompiler {
                             nextInstrAddr = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 } break;
@@ -237,7 +233,7 @@ namespace MyASMCompiler {
                             nextInstrAddr = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 } break;
@@ -250,7 +246,7 @@ namespace MyASMCompiler {
                             nextInstrAddr = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 } break;
@@ -327,7 +323,7 @@ namespace MyASMCompiler {
                         nextInstrAddr = code.InstructionLabels[label];
                         jumpWasMade = true;
                     } catch (KeyNotFoundException e) {
-                        throw new Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                        throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
                     }
                 } break;
                 #endregion
@@ -344,7 +340,7 @@ namespace MyASMCompiler {
                 #region Input
                 case OpCodes.INP_REG: { 
                     try { registers[param1] = (int) input[inputIndex++]; } 
-                    catch (IndexOutOfRangeException e) { throw new Runtime.InputError ("Input already finished"); }
+                    catch (IndexOutOfRangeException e) { throw new Errors.Runtime.InputError ("Input already finished"); }
                 } break;
                 #endregion
 
@@ -361,14 +357,14 @@ namespace MyASMCompiler {
                         output = Convert.ToChar (registers[param1]).ToString ();
                         hasOutput = true;
                     } catch (OverflowException e) {
-                        throw new Runtime.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
+                        throw new Errors.Runtime.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
                     }
                 } break;
                 #endregion
 
 
                 default: {
-                    throw new Runtime.RuntimeError ("Invalid OpCode");
+                    throw new Errors.Runtime.RuntimeError ("Invalid OpCode");
                 }
             }
 

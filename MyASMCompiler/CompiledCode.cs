@@ -38,7 +38,7 @@ namespace MyASMCompiler {
             this.Instructions = new List <Instruction> ();
             this.InstructionLabels = new Dictionary <string, int> ();
             this.DataLabels = new Dictionary <string, int> ();
-            this.StartDataValues = new int[HiddenCompiler.setupProperties.MaxDataAddress];
+            this.StartDataValues = new int[Runtime.setupProperties.MaxDataAddress];
             this.NextAddressPointer = 0;
 
             for (int i = 0; i < StartDataValues.Length; i ++) {

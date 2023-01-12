@@ -24,7 +24,7 @@ namespace MyASMCompiler {
             try {
                 stack[++SP] = value;
             } catch (IndexOutOfRangeException e) {
-                throw new Runtime.StackOverflow ();
+                throw new Errors.Runtime.StackOverflow ();
             }
         }
 
@@ -32,15 +32,15 @@ namespace MyASMCompiler {
             try {
                 return stack[SP--];
             } catch (IndexOutOfRangeException e) {
-                throw new Runtime.StackUnderflow ();
+                throw new Errors.Runtime.StackUnderflow ();
             }
         }
 
         public int read (int offset) {
             int position = SP - offset;
 
-            if (position < 0) { throw new Runtime.StackUnderflow (); }
-            if (position >= stack.Length) { throw new Runtime.StackOverflow (); }
+            if (position < 0) { throw new Errors.Runtime.StackUnderflow (); }
+            if (position >= stack.Length) { throw new Errors.Runtime.StackOverflow (); }
 
             return stack[SP - offset];
         }
@@ -48,8 +48,8 @@ namespace MyASMCompiler {
         public void write (int value, int offset) {
             int position = SP - offset;
 
-            if (position < 0) { throw new Runtime.StackUnderflow (); }
-            if (position >= stack.Length) { throw new Runtime.StackOverflow (); }
+            if (position < 0) { throw new Errors.Runtime.StackUnderflow (); }
+            if (position >= stack.Length) { throw new Errors.Runtime.StackOverflow (); }
 
             stack[SP - offset] = value;
         }

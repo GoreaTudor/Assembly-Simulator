@@ -44,10 +44,9 @@
     <Compile Include="CompiledCode.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="CurrentStatus.cs" />
-    <Compile Include="Debugger.cs" />
     <Compile Include="Errors\Runtime.cs" />
     <Compile Include="Errors\Sintax.cs" />
-    <Compile Include="HiddenCompiler.cs" />
+    <Compile Include="Runtime.cs" />
     <Compile Include="Instruction.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

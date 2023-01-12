@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using MyASMCompiler.Errors;
@@ -13,10 +14,13 @@ namespace MyASMCompiler {
     /// <list type="bullet">
     ///     <item> setup() - prepares the compiler with building parameters </item>
     ///     <item> compile() - builds the code </item>
-    ///     <item> run() - runs the code and returns the output of the code </item>
     /// </list>
     /// </summary>
     public class Compiler {
+
+        public static readonly Regex regex_validParam = new Regex (@"^([A-D]|(SP)|(BP)|([%]{0,1}[0-9]+))$");
+        public static readonly Regex regex_validLabel = new Regex (@"^[_a-zA-Z][\._a-zA-Z0-9]+$");
+        public static readonly Regex regex_validNumber = new Regex (@"^[\d]+$");
 
 
         /// <summary>
@@ -32,7 +36,7 @@ namespace MyASMCompiler {
             int max_stackSize = 2048;
             int default_stackSize = 128;
 
-            HiddenCompiler.setupProperties = new SetupProperties {
+            Runtime.setupProperties = new SetupProperties {
                 MaxDataAddress = (min_addressValue <= memorySize && memorySize <= max_addressValue) ? memorySize : default_addressValue,
                 MaxStackLength = (min_stackSize <= stackSize && stackSize <= max_stackSize) ? stackSize : default_stackSize
             };
@@ -50,7 +54,7 @@ namespace MyASMCompiler {
             /// Each line looks like:
             /// label: instruction param1, param2  # comment
             /// where commas, label (with ':'), param1, param2, comment are optional
-
+            
             // for each line 
             for (int lineNr = 0; lineNr < lines.Length; lineNr++) {
                 string line = lines[lineNr];
@@ -118,6 +122,7 @@ namespace MyASMCompiler {
             return compiledCode;
         }
 
+
         // receives "instruction   param1 ,    param2"  -- can have many spaces in between
         protected static Instruction toInstruction (CompiledCode compiledCode, string instructionText) {
 
@@ -172,7 +177,7 @@ namespace MyASMCompiler {
                     int address = compiledCode.NextAddressPointer;
 
                     /// param 1 ///
-                    if (HiddenCompiler.regex_validNumber.IsMatch (param1_str)) {         // Number
+                    if (regex_validNumber.IsMatch (param1_str)) {         // Number
                         int number = int.Parse (param1_str);
                         compiledCode.StartDataValues[compiledCode.NextAddressPointer++] = number;
 
@@ -207,7 +212,7 @@ namespace MyASMCompiler {
 
                     /// param 2 ///
                     if (param2_str != null) {
-                        string data_label = (HiddenCompiler.regex_validLabel.IsMatch (param2_str)) ? param2_str : null;
+                        string data_label = (regex_validLabel.IsMatch (param2_str)) ? param2_str : null;
                         if (data_label == null) {
                             throw new Sintax.ParameterError ($"Invalid label: {param2_str}");
                         }
@@ -796,6 +801,7 @@ namespace MyASMCompiler {
             return instruction;
         }
 
+
         /// <summary>
         /// receives "instruction   param1 ,    param2"  -- can have many spaces in between, but no spaces at end
         /// </summary>
@@ -868,6 +874,7 @@ namespace MyASMCompiler {
 
             return tokens;
         }
+
 
         protected static Parameter getParamTypeAndValue (CompiledCode compiledCode, string input) {
             switch (input[0]) {
@@ -953,7 +960,7 @@ namespace MyASMCompiler {
             } else if (input.StartsWith("0b")) {                             // Binary
                 return Convert.ToInt32 (value: input.Substring (startIndex: 2), fromBase: 2);
 
-            } else if (HiddenCompiler.regex_validNumber.IsMatch(input)) {   // Decimal
+            } else if (regex_validNumber.IsMatch(input)) {   // Decimal
                 return int.Parse (input);
 
             } else {                                                        // Invalid format
@@ -963,7 +970,7 @@ namespace MyASMCompiler {
 
         protected static int? parseDataLabel (CompiledCode compiledCode, string input) {
             // check if it's a valid label format
-            string label = (HiddenCompiler.regex_validLabel.IsMatch (input)) ? input : null;
+            string label = (regex_validLabel.IsMatch (input)) ? input : null;
             if (label == null) { return null; }
 
             // check if the data label exists
@@ -977,56 +984,7 @@ namespace MyASMCompiler {
 
         protected static string parseInstrLabel (string input) {
             // check if it's a valid label format
-            return (HiddenCompiler.regex_validLabel.IsMatch (input)) ? input : null;
-        }
-
-        /// hasCharOrStr is true only for:  <DB "Hello World", hello>  or  <DB "Hello World">  or  <DB 'C', char>  or  <DB 'C'>
-        /// but not for:  <DB 12, nr>  or  <DB 0>   -- those will be split like normal instructions
-        /// same goes for DEF, since DB is equivalent to DEF
-        protected static (string str1, string str2, string str3, bool hasCharOrStr) mySplitter (string s) {
-            bool found = false;
-
-            int index_1 = 0; // index of first quotation mark / apostrophe
-            while (index_1 < s.Length && !found) {
-                if (s[index_1] == '\'' || s[index_1] == '\"') { found = true; } 
-                else { index_1++; }
-            }
-
-            if (! found) {  // no quotation mark or apostrophe found, cannot be specially split, only normal split
-                return (null, null, null, false);
-            }
-
-            found = false;
-            int index_2 = 0; // index of last quotation mark / apostrophe
-            while (index_2 < s.Length && !found) {
-                if (s[index_2] == '\'' || s[index_2] == '\"') { found = true; } 
-                else { index_2--; }
-            }
-
-            if (index_1 == index_2) { throw new Sintax.ParameterError ("Missing \' or \""); }
-
-            string str1 = s.Substring (startIndex: 0, length: index_1 - 0);
-            string str2 = s.Substring (startIndex: index_1, length: index_2 - index_1 + 1);
-
-            string str3 = null;
-            try {
-                str3 = s.Substring (startIndex: index_2 + 1);
-
-            } catch (Exception e) {
-
-            }
-
-            return (str1, str2, null, false);
-        }
-
-
-        /// <summary>
-        /// Runs the code and returns the output of the code.
-        /// </summary>
-        /// <param name="code"> the set of instructions that will be executed. </param>
-        /// <returns> the output of the code </returns>
-        public static string run (CompiledCode code, string input) {
-            return null;
+            return (regex_validLabel.IsMatch (input)) ? input : null;
         }
     }
 }
