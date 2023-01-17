@@ -44,8 +44,8 @@
     <Compile Include="CompiledCode.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="CurrentStatus.cs" />
-    <Compile Include="Errors\Runtime.cs" />
-    <Compile Include="Errors\Sintax.cs" />
+    <Compile Include="Errors\RuntimeErrors.cs" />
+    <Compile Include="Errors\SintaxErrors.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Instruction.cs" />

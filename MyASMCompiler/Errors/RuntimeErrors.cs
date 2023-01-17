@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MyASMCompiler.Errors {
-    public class Runtime {
+    public class RuntimeErrors {
         public class RuntimeError : Exception {
             public RuntimeError (string message) : base (message) { }
         }

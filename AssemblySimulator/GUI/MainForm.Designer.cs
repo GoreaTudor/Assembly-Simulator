@@ -25,6 +25,8 @@ namespace AssemblySimulator.GUI {
         /// </summary>
         private void InitializeComponent () {
             this.toolBar = new System.Windows.Forms.Panel();
+            this.btn_reset = new System.Windows.Forms.Button();
+            this.btn_viewMemory = new System.Windows.Forms.Button();
             this.btn_stop = new System.Windows.Forms.Button();
             this.btn_step = new System.Windows.Forms.Button();
             this.btn_start = new System.Windows.Forms.Button();
@@ -49,6 +51,7 @@ namespace AssemblySimulator.GUI {
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showMemoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txt_CodeArea = new System.Windows.Forms.TextBox();
@@ -70,8 +73,6 @@ namespace AssemblySimulator.GUI {
             this.txt_console = new System.Windows.Forms.TextBox();
             this.txt_lines = new System.Windows.Forms.TextBox();
             this.worker = new System.ComponentModel.BackgroundWorker();
-            this.showMemoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btn_viewMemory = new System.Windows.Forms.Button();
             this.toolBar.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.panel_data.SuspendLayout();
@@ -82,6 +83,7 @@ namespace AssemblySimulator.GUI {
             // toolBar
             // 
             this.toolBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.toolBar.Controls.Add(this.btn_reset);
             this.toolBar.Controls.Add(this.btn_viewMemory);
             this.toolBar.Controls.Add(this.btn_stop);
             this.toolBar.Controls.Add(this.btn_step);
@@ -94,9 +96,32 @@ namespace AssemblySimulator.GUI {
             this.toolBar.Size = new System.Drawing.Size(1290, 53);
             this.toolBar.TabIndex = 0;
             // 
+            // btn_reset
+            // 
+            this.btn_reset.BackColor = System.Drawing.Color.Red;
+            this.btn_reset.Location = new System.Drawing.Point(353, 4);
+            this.btn_reset.Name = "btn_reset";
+            this.btn_reset.Size = new System.Drawing.Size(80, 40);
+            this.btn_reset.TabIndex = 5;
+            this.btn_reset.Text = "Reset";
+            this.btn_reset.UseVisualStyleBackColor = false;
+            this.btn_reset.Click += new System.EventHandler(this.btn_reset_Click);
+            // 
+            // btn_viewMemory
+            // 
+            this.btn_viewMemory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_viewMemory.BackColor = System.Drawing.Color.Yellow;
+            this.btn_viewMemory.Location = new System.Drawing.Point(743, 4);
+            this.btn_viewMemory.Name = "btn_viewMemory";
+            this.btn_viewMemory.Size = new System.Drawing.Size(120, 40);
+            this.btn_viewMemory.TabIndex = 4;
+            this.btn_viewMemory.Text = "View Memory";
+            this.btn_viewMemory.UseVisualStyleBackColor = false;
+            // 
             // btn_stop
             // 
-            this.btn_stop.BackColor = System.Drawing.Color.Red;
+            this.btn_stop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.btn_stop.Location = new System.Drawing.Point(267, 4);
             this.btn_stop.Name = "btn_stop";
             this.btn_stop.Size = new System.Drawing.Size(80, 40);
@@ -107,7 +132,7 @@ namespace AssemblySimulator.GUI {
             // 
             // btn_step
             // 
-            this.btn_step.BackColor = System.Drawing.Color.Lime;
+            this.btn_step.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.btn_step.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_step.Location = new System.Drawing.Point(180, 4);
             this.btn_step.Margin = new System.Windows.Forms.Padding(4);
@@ -281,7 +306,7 @@ namespace AssemblySimulator.GUI {
             this.outputToolStripMenuItem,
             this.inputToolStripMenuItem});
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(191, 26);
             this.clearToolStripMenuItem.Text = "Clear";
             // 
             // consoleToolStripMenuItem
@@ -304,6 +329,13 @@ namespace AssemblySimulator.GUI {
             this.inputToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.inputToolStripMenuItem.Text = "Input";
             this.inputToolStripMenuItem.Click += new System.EventHandler(this.inputToolStripMenuItem_Click);
+            // 
+            // showMemoryToolStripMenuItem
+            // 
+            this.showMemoryToolStripMenuItem.Name = "showMemoryToolStripMenuItem";
+            this.showMemoryToolStripMenuItem.Size = new System.Drawing.Size(191, 26);
+            this.showMemoryToolStripMenuItem.Text = "Show Memory";
+            this.showMemoryToolStripMenuItem.Click += new System.EventHandler(this.showMemoryToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -367,6 +399,7 @@ namespace AssemblySimulator.GUI {
             this.txt_output.Location = new System.Drawing.Point(8, 144);
             this.txt_output.Multiline = true;
             this.txt_output.Name = "txt_output";
+            this.txt_output.ReadOnly = true;
             this.txt_output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txt_output.Size = new System.Drawing.Size(404, 80);
             this.txt_output.TabIndex = 3;
@@ -524,25 +557,6 @@ namespace AssemblySimulator.GUI {
             this.worker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_ProgressChanged);
             this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
             // 
-            // showMemoryToolStripMenuItem
-            // 
-            this.showMemoryToolStripMenuItem.Name = "showMemoryToolStripMenuItem";
-            this.showMemoryToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.showMemoryToolStripMenuItem.Text = "Show Memory";
-            this.showMemoryToolStripMenuItem.Click += new System.EventHandler(this.showMemoryToolStripMenuItem_Click);
-            // 
-            // btn_viewMemory
-            // 
-            this.btn_viewMemory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_viewMemory.BackColor = System.Drawing.Color.Yellow;
-            this.btn_viewMemory.Location = new System.Drawing.Point(743, 4);
-            this.btn_viewMemory.Name = "btn_viewMemory";
-            this.btn_viewMemory.Size = new System.Drawing.Size(120, 40);
-            this.btn_viewMemory.TabIndex = 4;
-            this.btn_viewMemory.Text = "View Memory";
-            this.btn_viewMemory.UseVisualStyleBackColor = false;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -623,5 +637,6 @@ namespace AssemblySimulator.GUI {
         private System.ComponentModel.BackgroundWorker worker;
         private System.Windows.Forms.ToolStripMenuItem showMemoryToolStripMenuItem;
         private System.Windows.Forms.Button btn_viewMemory;
+        private System.Windows.Forms.Button btn_reset;
     }
 }

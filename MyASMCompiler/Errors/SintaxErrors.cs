@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MyASMCompiler.Errors {
-    public class Sintax {
+    public class SintaxErrors {
         public class SintaxError : Exception {
             public SintaxError (string message) : base (message) { }
         }

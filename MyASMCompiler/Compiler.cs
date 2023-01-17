@@ -107,12 +107,12 @@ namespace MyASMCompiler {
                         if (instruction.Opcode != OpCodes.DEF) {
                             compiledCode.Instructions.Add (instruction);
                         }
-                    } catch (Sintax.SintaxError error) {
-                        throw new Sintax.SintaxError (error.Message + $" at line {lineNr + 1}");
-                    } catch (Sintax.OperationError error) {
-                        throw new Sintax.OperationError (error.Message + $" at line {lineNr + 1}");
-                    } catch (Sintax.ParameterError error) {
-                        throw new Sintax.ParameterError (error.Message + $" at line {lineNr + 1}");
+                    } catch (SintaxErrors.SintaxError error) {
+                        throw new SintaxErrors.SintaxError (error.Message + $" at line {lineNr + 1}");
+                    } catch (SintaxErrors.OperationError error) {
+                        throw new SintaxErrors.OperationError (error.Message + $" at line {lineNr + 1}");
+                    } catch (SintaxErrors.ParameterError error) {
+                        throw new SintaxErrors.ParameterError (error.Message + $" at line {lineNr + 1}");
                     } catch (Exception e) {
                         throw new Exception (e.Message + $" at line {lineNr + 1}");
                     }
@@ -142,14 +142,14 @@ namespace MyASMCompiler {
 
                 case "HLT": { // format: HLT
                     if (param1_str != null || param2_str != null) {
-                        throw new Sintax.OperationError ("HLT should have no parameters");
+                        throw new SintaxErrors.OperationError ("HLT should have no parameters");
                     }
                     instruction.Opcode = OpCodes.HLT;
                 } break;
 
                 #region Memory
                 case "MOV": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("MOV should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("MOV should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
@@ -164,13 +164,13 @@ namespace MyASMCompiler {
                     else if (param1.Type == ParamType.pointer && param2.Type == ParamType.register) { instruction.Opcode = OpCodes.MOV_POINTER_REG; } 
                     else if (param1.Type == ParamType.address && param2.Type == ParamType.number) { instruction.Opcode = OpCodes.MOV_ADDRESS_NUMBER; } 
                     else if (param1.Type == ParamType.address && param2.Type == ParamType.register) { instruction.Opcode = OpCodes.MOV_ADDRESS_REG; } 
-                    else { throw new Sintax.ParameterError ("MOV cannot have this types of parameters"); }
+                    else { throw new SintaxErrors.ParameterError ("MOV cannot have this types of parameters"); }
                 } break;
 
                 case "DB":
                 case "DEF": { // format: DEF label, "String"/'C'/number     // has to be created before it is used
                     if (param1_str == null) {
-                        throw new Sintax.OperationError ("DEF/DB should have 1 or 2 parameters: <label> <\"String\"/\'C\'/number>");
+                        throw new SintaxErrors.OperationError ("DEF/DB should have 1 or 2 parameters: <label> <\"String\"/\'C\'/number>");
                     }
                     instruction.Opcode = OpCodes.DEF;
 
@@ -183,21 +183,21 @@ namespace MyASMCompiler {
 
                     } else if (param1_str[0] == '\'') {                                // 'C'
                         if (param1_str[param1_str.Length - 1] != '\'') {
-                            throw new Sintax.ParameterError ("Missing \'");
+                            throw new SintaxErrors.ParameterError ("Missing \'");
                         }
 
                         string chars = param1_str.Substring (startIndex: 1, length: param1_str.Length - 2);
                         if (chars.Length == 0) {
-                            throw new Sintax.ParameterError ("Empty character");
+                            throw new SintaxErrors.ParameterError ("Empty character");
                         } else if (chars.Length > 1) {
-                            throw new Sintax.ParameterError ("Too many characters, use String instead");
+                            throw new SintaxErrors.ParameterError ("Too many characters, use String instead");
                         }
 
                         compiledCode.StartDataValues[compiledCode.NextAddressPointer++] = chars[0];
 
                     } else if (param1_str[0] == '\"') {                                 // "String"
                         if (param1_str[param1_str.Length - 1] != '\"') {
-                            throw new Sintax.ParameterError ("Missing \"");
+                            throw new SintaxErrors.ParameterError ("Missing \"");
                         }
 
                         string chars = param1_str.Substring (startIndex: 1, length: param1_str.Length - 2);
@@ -207,20 +207,20 @@ namespace MyASMCompiler {
                         }
 
                     } else {
-                        throw new Sintax.ParameterError ($"DEF/DB Second parameter should be: \"String\"/\'C\'/Number, but is: {param2_str}");
+                        throw new SintaxErrors.ParameterError ($"DEF/DB Second parameter should be: \"String\"/\'C\'/Number, but is: {param2_str}");
                     }
 
                     /// param 2 ///
                     if (param2_str != null) {
                         string data_label = (regex_validLabel.IsMatch (param2_str)) ? param2_str : null;
                         if (data_label == null) {
-                            throw new Sintax.ParameterError ($"Invalid label: {param2_str}");
+                            throw new SintaxErrors.ParameterError ($"Invalid label: {param2_str}");
                         }
 
                         // check if the data_label already exists
                         try {
                             int dataAddress = compiledCode.DataLabels[data_label];
-                            throw new Sintax.SintaxError ($"Data label \"{data_label}\" (-> {dataAddress}) already exists");
+                            throw new SintaxErrors.SintaxError ($"Data label \"{data_label}\" (-> {dataAddress}) already exists");
 
                         } catch (KeyNotFoundException) {
                             // all good
@@ -233,11 +233,11 @@ namespace MyASMCompiler {
 
                 #region Arithmetic
                 case "ADD": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("ADD should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("ADD should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("ADD first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("ADD first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -248,15 +248,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.ADD_REG_REG; }
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.ADD_REG_POINTER; }
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.ADD_REG_ADDRESS; }
-                    else { throw new Sintax.ParameterError ("ADD second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("ADD second parameter type is Invalid"); }
                 } break;
 
                 case "SUB": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SUB should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SUB should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SUB first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("SUB first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -267,15 +267,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.SUB_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.SUB_REG_POINTER; }
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.SUB_REG_ADDRESS; } 
-                    else { throw new Sintax.ParameterError ("SUB second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("SUB second parameter type is Invalid"); }
                 } break;
 
                 case "MULT": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("MULT should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("MULT should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("MULT first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("MULT first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -286,15 +286,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.MULT_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.MULT_REG_POINTER; }
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.MULT_REG_ADDRESS; } 
-                    else { throw new Sintax.ParameterError ("MULT second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("MULT second parameter type is Invalid"); }
                 } break;
 
                 case "DIV": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("DIV should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("DIV should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("DIV first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("DIV first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -305,15 +305,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.DIV_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.DIV_REG_POINTER; } 
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.DIV_REG_ADDRESS; }
-                    else { throw new Sintax.ParameterError ("DIV second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("DIV second parameter type is Invalid"); }
                 } break;
 
                 case "MOD": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("MOD should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("MOD should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("MOD first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("MOD first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -324,37 +324,37 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.MOD_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.MOD_REG_POINTER; } 
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.MOD_REG_ADDRESS; } 
-                    else { throw new Sintax.ParameterError ("MOD second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("MOD second parameter type is Invalid"); }
                 } break;
 
                 case "INC": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("INC should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("INC should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("INC parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("INC parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.INC_REG;
                 } break;
 
                 case "DEC": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("DEC should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("DEC should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("DEC parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("DEC parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.DEC_REG;
                 }  break;
 
                 case "NEG": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("NEG should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("NEG should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("NEG parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("NEG parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.NEG_REG;
@@ -363,11 +363,11 @@ namespace MyASMCompiler {
 
                 #region Logic
                 case "AND": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("AND should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.ParameterError ("AND should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("AND first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("AND first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -378,15 +378,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.AND_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.AND_REG_POINTER; } 
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.AND_REG_ADDRESS; } 
-                    else { throw new Sintax.ParameterError ("AND second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("AND second parameter type is Invalid"); }
                 } break;
 
                 case "OR": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("OR should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.ParameterError ("OR should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("OR first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("OR first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -397,15 +397,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.OR_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.OR_REG_POINTER; } 
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.OR_REG_ADDRESS; } 
-                    else { throw new Sintax.ParameterError ("OR second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("OR second parameter type is Invalid"); }
                 } break;
 
                 case "XOR": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.ParameterError ("XOR should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.ParameterError ("XOR should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("XOR first parameter should be a Register");
+                        throw new SintaxErrors.ParameterError ("XOR first parameter should be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
@@ -416,15 +416,15 @@ namespace MyASMCompiler {
                     else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.XOR_REG_REG; } 
                     else if (param2.Type == ParamType.pointer) { instruction.Opcode = OpCodes.XOR_REG_POINTER; } 
                     else if (param2.Type == ParamType.address) { instruction.Opcode = OpCodes.XOR_REG_ADDRESS; } 
-                    else { throw new Sintax.ParameterError ("XOR second parameter type is Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("XOR second parameter type is Invalid"); }
                 } break;
 
                 case "NOT": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("NOT should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("NOT should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("NOT parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("NOT parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.NOT_REG;
@@ -433,11 +433,11 @@ namespace MyASMCompiler {
 
                 #region Jumps and Branches
                 case "JMP": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("JMP should have only one parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("JMP should have only one parameter"); }
 
                     string label = parseInstrLabel (param1_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"Invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"Invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JMP_LABEL;
@@ -445,17 +445,17 @@ namespace MyASMCompiler {
 
                 case "JZ":
                 case "BZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("JZ/BZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("JZ/BZ should have 2 parameters"); }
 
                     Parameter reg = getParamTypeAndValue (compiledCode, param1_str);
                     if (reg.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("JZ/BZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("JZ/BZ first parameter must be a Register");
                     }
                     instruction.Param1 = reg.Value;
 
                     string label = parseInstrLabel (param2_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"JZ/BZ second parameter invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"JZ/BZ second parameter invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JZ_REG_LABEL;
@@ -463,17 +463,17 @@ namespace MyASMCompiler {
 
                 case "JNZ":
                 case "BNZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("JNZ/BNZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("JNZ/BNZ should have 2 parameters"); }
 
                     Parameter reg = getParamTypeAndValue (compiledCode, param1_str);
                     if (reg.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("JNZ/BNZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("JNZ/BNZ first parameter must be a Register");
                     }
                     instruction.Param1 = reg.Value;
 
                     string label = parseInstrLabel (param2_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"JNZ/BNZ second parameter invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"JNZ/BNZ second parameter invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JNZ_REG_LABEL;
@@ -481,17 +481,17 @@ namespace MyASMCompiler {
 
                 case "JLZ":
                 case "BLZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("JLZ/BLZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("JLZ/BLZ should have 2 parameters"); }
 
                     Parameter reg = getParamTypeAndValue (compiledCode, param1_str);
                     if (reg.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("JLZ/BLZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("JLZ/BLZ first parameter must be a Register");
                     }
                     instruction.Param1 = reg.Value;
 
                     string label = parseInstrLabel (param2_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"JLZ/BLZ second parameter invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"JLZ/BLZ second parameter invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JLZ_REG_LABEL;
@@ -499,17 +499,17 @@ namespace MyASMCompiler {
 
                 case "JLEZ":
                 case "BLEZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("JLEZ/BLEZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("JLEZ/BLEZ should have 2 parameters"); }
 
                     Parameter reg = getParamTypeAndValue (compiledCode, param1_str);
                     if (reg.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("JLEZ/BLEZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("JLEZ/BLEZ first parameter must be a Register");
                     }
                     instruction.Param1 = reg.Value;
 
                     string label = parseInstrLabel (param2_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"JLEZ/BLEZ second parameter invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"JLEZ/BLEZ second parameter invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JLEZ_REG_LABEL;
@@ -517,17 +517,17 @@ namespace MyASMCompiler {
 
                 case "JGZ":
                 case "BGZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("JGZ/BGZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("JGZ/BGZ should have 2 parameters"); }
 
                     Parameter reg = getParamTypeAndValue (compiledCode, param1_str);
                     if (reg.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("JGZ/BGZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("JGZ/BGZ first parameter must be a Register");
                     }
                     instruction.Param1 = reg.Value;
 
                     string label = parseInstrLabel (param2_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"JGZ/BGZ second parameter invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"JGZ/BGZ second parameter invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JGZ_REG_LABEL;
@@ -535,17 +535,17 @@ namespace MyASMCompiler {
 
                 case "JGEZ":
                 case "BGEZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("JGEZ/BGEZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("JGEZ/BGEZ should have 2 parameters"); }
 
                     Parameter reg = getParamTypeAndValue (compiledCode, param1_str);
                     if (reg.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("JGEZ/BGEZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("JGEZ/BGEZ first parameter must be a Register");
                     }
                     instruction.Param1 = reg.Value;
 
                     string label = parseInstrLabel (param2_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"JGEZ/BGEZ second parameter invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"JGEZ/BGEZ second parameter invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.JGEZ_REG_LABEL;
@@ -554,102 +554,102 @@ namespace MyASMCompiler {
 
                 #region Sets
                 case "SZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SZ should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SZ first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SZ second parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SZ second parameter must be a Register");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.SZ_REG_REG;
                 } break;
 
                 case "SNZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SNZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SNZ should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SNZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SNZ first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SNZ second parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SNZ second parameter must be a Register");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.SNZ_REG_REG;
                 } break;
 
                 case "SLZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SLZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SLZ should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SLZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SLZ first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SLZ second parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SLZ second parameter must be a Register");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.SLZ_REG_REG;
                 } break;
 
                 case "SLEZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SLEZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SLEZ should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SLEZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SLEZ first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SLEZ second parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SLEZ second parameter must be a Register");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.SLEZ_REG_REG;
                 } break;
 
                 case "SGZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SGZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SGZ should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SGZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SGZ first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SGZ second parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SGZ second parameter must be a Register");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.SGZ_REG_REG;
                 } break;
 
                 case "SGEZ": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("SGEZ should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("SGEZ should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SGEZ first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SGEZ first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SGEZ second parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SGEZ second parameter must be a Register");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.SGEZ_REG_REG;
@@ -658,22 +658,22 @@ namespace MyASMCompiler {
 
                 #region Shifts
                 case "SHL": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("SHL should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("SHL should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SHL parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SHL parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.SHL_REG;
                 } break;
 
                 case "SHR": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("SHR should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("SHR should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("SHR parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("SHR parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.SHR_REG;
@@ -682,7 +682,7 @@ namespace MyASMCompiler {
 
                 #region Stack and Functions
                 case "PUSH": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("PUSH should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("PUSH should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     instruction.Param1 = param.Value;
@@ -691,60 +691,60 @@ namespace MyASMCompiler {
                     else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.PUSH_REG; }
                     else if (param.Type == ParamType.pointer) { instruction.Opcode = OpCodes.PUSH_POINTER; }
                     else if (param.Type == ParamType.address) { instruction.Opcode = OpCodes.PUSH_ADDRESS; }
-                    else { throw new Sintax.ParameterError ("PUSH parameter type Invalid"); }
+                    else { throw new SintaxErrors.ParameterError ("PUSH parameter type Invalid"); }
                 } break;
 
                 case "POP": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("POP should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("POP should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     instruction.Param1 = param.Value;
 
                     if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.POP_NUMBER; }
                     else if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.POP_REG; }
-                    else { throw new Sintax.ParameterError ("POP parameter must be a Register or a Number"); }
+                    else { throw new SintaxErrors.ParameterError ("POP parameter must be a Register or a Number"); }
                 } break;
 
                 case "STR": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("STR should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("STR should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("STR first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("STR first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.number) {
-                        throw new Sintax.ParameterError ("STR second parameter must be a Number");
+                        throw new SintaxErrors.ParameterError ("STR second parameter must be a Number");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.STR_REG_NUMBER;
                 } break;
 
                 case "STW": {
-                    if (param1_str == null || param2_str == null) { throw new Sintax.OperationError ("STW should have 2 parameters"); }
+                    if (param1_str == null || param2_str == null) { throw new SintaxErrors.OperationError ("STW should have 2 parameters"); }
 
                     Parameter param1 = getParamTypeAndValue (compiledCode, param1_str);
                     if (param1.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("STW first parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("STW first parameter must be a Register");
                     }
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
                     if (param2.Type != ParamType.number) {
-                        throw new Sintax.ParameterError ("STW second parameter must be a Number");
+                        throw new SintaxErrors.ParameterError ("STW second parameter must be a Number");
                     }
                     instruction.Param2 = param2.Value;
                     instruction.Opcode = OpCodes.STW_REG_NUMBER;
                 } break;
 
                 case "CALL": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("CALL should have only one parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("CALL should have only one parameter"); }
 
                     string label = parseInstrLabel (param1_str);
                     if (label == null) {
-                        throw new Sintax.ParameterError ($"Invalid label: {label}");
+                        throw new SintaxErrors.ParameterError ($"Invalid label: {label}");
                     }
                     instruction.Label = label;
                     instruction.Opcode = OpCodes.CALL_LABEL;
@@ -752,7 +752,7 @@ namespace MyASMCompiler {
 
                 case "RET": {
                     if (param1_str != null || param2_str != null) {
-                        throw new Sintax.OperationError ("RET should have no parameters");
+                        throw new SintaxErrors.OperationError ("RET should have no parameters");
                     }
                     instruction.Opcode = OpCodes.RET;
                 } break;
@@ -760,33 +760,33 @@ namespace MyASMCompiler {
 
                 #region IO
                 case "INP": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("INP should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("INP should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("INP parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("INP parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.INP_REG;
                 } break;
 
                 case "OUTI": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("OUTI should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTI should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("OUTI parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("OUTI parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.OUTI_REG;
                 } break;
 
                 case "OUTC": {
-                    if (param1_str == null || param2_str != null) { throw new Sintax.OperationError ("OUTC should have 1 parameter"); }
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTC should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     if (param.Type != ParamType.register) {
-                        throw new Sintax.ParameterError ("OUTC parameter must be a Register");
+                        throw new SintaxErrors.ParameterError ("OUTC parameter must be a Register");
                     }
                     instruction.Param1 = param.Value;
                     instruction.Opcode = OpCodes.OUTC_REG;
@@ -794,7 +794,7 @@ namespace MyASMCompiler {
                 #endregion
 
                 default: {
-                    throw new Sintax.OperationError($"Invalid operation: {operation_str}");
+                    throw new SintaxErrors.OperationError($"Invalid operation: {operation_str}");
                 }
             }
             
@@ -880,7 +880,7 @@ namespace MyASMCompiler {
             switch (input[0]) {
                 case '[': { // [register], [number], [data_label]  -- no offset allowed
                     if (input[input.Length - 1] != ']') {
-                        throw new Sintax.ParameterError ("Missing ]");
+                        throw new SintaxErrors.ParameterError ("Missing ]");
                     }
 
                     string address = input.Substring(startIndex: 1, length: input.Length - 2);
@@ -900,18 +900,18 @@ namespace MyASMCompiler {
                         return new Parameter { Type = ParamType.address, Value = dataLabelValue.Value };
                     }
 
-                    throw new Sintax.ParameterError ("Invalid format for address type (with [])");
+                    throw new SintaxErrors.ParameterError ("Invalid format for address type (with [])");
                 }
 
                 case '\'': { // 'C'
                     if (input[input.Length - 1] != '\'') {
-                        throw new Sintax.ParameterError ("Missing \'");
+                        throw new SintaxErrors.ParameterError ("Missing \'");
                     }
 
                     string character = input.Substring(startIndex: 1, length: input.Length - 2);
 
                     if (character.Length != 1) {
-                        throw new Sintax.ParameterError ($"Invalid character type \'{character}\'");
+                        throw new SintaxErrors.ParameterError ($"Invalid character type \'{character}\'");
                     }
 
                     return new Parameter { Type = ParamType.number, Value = (int) character[0]};
@@ -933,7 +933,7 @@ namespace MyASMCompiler {
                         return new Parameter { Type = ParamType.number, Value = dataLabelValue.Value };
                     }
 
-                    throw new Sintax.ParameterError ("Invalid format for simple type (without [])");
+                    throw new SintaxErrors.ParameterError ("Invalid format for simple type (without [])");
                 }
             }
         }

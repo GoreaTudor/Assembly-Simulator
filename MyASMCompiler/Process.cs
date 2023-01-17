@@ -22,7 +22,7 @@ namespace MyASMCompiler {
             this.IP = 0;
 
             this.registers = new int[4]; // all are init to 0
-            this.memory = new int[properties.MaxDataAddress];
+            this.memory = code.StartDataValues;
             this.stack = new Stack (properties.MaxStackLength);
 
             this.input = (input == null)? "" : input;
@@ -31,6 +31,18 @@ namespace MyASMCompiler {
 
 
         public CurrentStatus next() {
+            if (IP >= code.Instructions.Count) {
+                return new CurrentStatus {
+                    instruction = null,
+                    registers = registers,
+                    memory = memory,
+                    stack = stack,
+                    stop = true,
+                    hasOutput = false,
+                    output = null
+                };
+            }
+
             Instruction instr = code.Instructions[IP];
 
             OpCodes opcode = instr.Opcode;
@@ -51,6 +63,19 @@ namespace MyASMCompiler {
                     stop = true;
                 }
                 break;
+                #endregion
+
+
+                /// Memory ///
+                #region MOV
+                case OpCodes.MOV_REG_NUMBER:    { registers[param1] = param2; } break;
+                case OpCodes.MOV_REG_REG:       { registers[param1] = registers[param2]; } break;
+                case OpCodes.MOV_REG_POINTER:   { registers[param1] = memory[registers[param2]]; } break;
+                case OpCodes.MOV_REG_ADDRESS:   { registers[param1] = memory[param2]; } break;
+                case OpCodes.MOV_POINTER_NUMBER:{ memory[registers[param1]] = param2; } break;
+                case OpCodes.MOV_POINTER_REG:   { memory[registers[param1]] = registers[param2]; } break;
+                case OpCodes.MOV_ADDRESS_NUMBER:{ memory[param1] = param2; } break;
+                case OpCodes.MOV_ADDRESS_REG:   { memory[param1] = registers[param2]; } break;
                 #endregion
 
 
@@ -137,7 +162,7 @@ namespace MyASMCompiler {
                         nextIP = code.InstructionLabels[label];
                         jumpWasMade = true;
                     } catch (KeyNotFoundException e) {
-                        throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                        throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                     }
                 }
                 break;
@@ -150,7 +175,7 @@ namespace MyASMCompiler {
                             nextIP = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 }
@@ -164,7 +189,7 @@ namespace MyASMCompiler {
                             nextIP = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 }
@@ -178,7 +203,7 @@ namespace MyASMCompiler {
                             nextIP = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 }
@@ -192,7 +217,7 @@ namespace MyASMCompiler {
                             nextIP = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 }
@@ -206,7 +231,7 @@ namespace MyASMCompiler {
                             nextIP = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 }
@@ -220,7 +245,7 @@ namespace MyASMCompiler {
                             nextIP = code.InstructionLabels[label];
                             jumpWasMade = true;
                         } catch (KeyNotFoundException e) {
-                            throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                            throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                         }
                     }
                 }
@@ -295,7 +320,7 @@ namespace MyASMCompiler {
                         nextIP = code.InstructionLabels[label];
                         jumpWasMade = true;
                     } catch (KeyNotFoundException e) {
-                        throw new Errors.Runtime.InstrLabelNotFound ($"Instruction label not found: {label}");
+                        throw new Errors.RuntimeErrors.InstrLabelNotFound ($"Instruction label not found: {label}");
                     }
                 } break;
                 #endregion
@@ -312,14 +337,14 @@ namespace MyASMCompiler {
                 #region Input
                 case OpCodes.INP_REG: {
                     try { registers[param1] = (int) input[inputIndex++]; } 
-                    catch (IndexOutOfRangeException e) { throw new Errors.Runtime.InputError ("Input already finished"); }
+                    catch (IndexOutOfRangeException e) { throw new Errors.RuntimeErrors.InputError ("Input already finished"); }
                 }
                 break;
                 #endregion
 
                 #region Output Integer
                 case OpCodes.OUTI_REG: {
-                    output = (registers[param1]).ToString ();
+                    output = $"{registers[param1]} ";
                     hasOutput = true;
                 }
                 break;
@@ -331,7 +356,7 @@ namespace MyASMCompiler {
                         output = Convert.ToChar (registers[param1]).ToString ();
                         hasOutput = true;
                     } catch (OverflowException e) {
-                        throw new Errors.Runtime.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
+                        throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
                     }
                 }
                 break;
@@ -339,7 +364,7 @@ namespace MyASMCompiler {
 
 
                 default: {
-                    throw new Errors.Runtime.RuntimeError ("Invalid OpCode");
+                    throw new Errors.RuntimeErrors.RuntimeError ("Invalid OpCode");
                 }
             }
 
@@ -347,6 +372,7 @@ namespace MyASMCompiler {
             this.IP = nextIP;
 
             return new CurrentStatus {
+                instruction = ((IP < code.Instructions.Count) ? code.Instructions[IP] : null),
                 registers = registers,
                 memory = memory,
                 stack = stack,

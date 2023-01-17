@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
 
 using MyASMCompiler.Errors;
 
 namespace MyASMCompiler {
-    class Runtime {
+    public class Runtime {
         public static SetupProperties setupProperties { get; set; }
         private static Process process = null;
 
@@ -26,6 +27,7 @@ namespace MyASMCompiler {
         }
 
         public static CurrentStatus step() {
+            Thread.Sleep (100);
             return process.next ();
         }
     }

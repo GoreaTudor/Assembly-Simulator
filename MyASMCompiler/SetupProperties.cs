@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MyASMCompiler {
-    class SetupProperties {
+    public class SetupProperties {
         public int MaxDataAddress { get; set; }
         public int MaxStackLength { get; set; }
     }

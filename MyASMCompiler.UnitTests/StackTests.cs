@@ -35,7 +35,7 @@ namespace MyASMCompiler.UnitTests {
 
             Console.WriteLine ("Full Stack: " + stack.ToString ());
 
-            Assert.ThrowsException <Runtime.StackOverflow> (() => {
+            Assert.ThrowsException <RuntimeErrors.StackOverflow> (() => {
                 stack.push (404);
             });
         }
@@ -62,7 +62,7 @@ namespace MyASMCompiler.UnitTests {
             Stack stack = new Stack (10);
             Console.WriteLine ("Empty stack: " + stack.ToString ());
 
-            Assert.ThrowsException<Runtime.StackUnderflow> (() => {
+            Assert.ThrowsException<RuntimeErrors.StackUnderflow> (() => {
                 stack.pop ();
             });
         }
@@ -82,9 +82,9 @@ namespace MyASMCompiler.UnitTests {
                 Console.WriteLine ($"Value: {value}");
                 Assert.AreEqual (1, value);
 
-            } catch (Runtime.StackOverflow e) {
+            } catch (RuntimeErrors.StackOverflow e) {
                 Assert.Fail ();
-            } catch (Runtime.StackUnderflow e) {
+            } catch (RuntimeErrors.StackUnderflow e) {
                 Assert.Fail ();
             }
         }
@@ -102,9 +102,9 @@ namespace MyASMCompiler.UnitTests {
                 int value = stack.read (-10);
                 Assert.Fail ();
 
-            } catch (Runtime.StackOverflow e) {
+            } catch (RuntimeErrors.StackOverflow e) {
                 Assert.IsTrue (true);
-            } catch (Runtime.StackUnderflow e) {
+            } catch (RuntimeErrors.StackUnderflow e) {
                 Assert.Fail ();
             }
         }
@@ -122,9 +122,9 @@ namespace MyASMCompiler.UnitTests {
                 int value = stack.read (10);
                 Assert.Fail ();
 
-            } catch (Runtime.StackOverflow e) {
+            } catch (RuntimeErrors.StackOverflow e) {
                 Assert.Fail ();
-            } catch (Runtime.StackUnderflow e) {
+            } catch (RuntimeErrors.StackUnderflow e) {
                 Assert.IsTrue (true);
             }
         }
