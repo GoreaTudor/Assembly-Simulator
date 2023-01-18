@@ -236,7 +236,10 @@ namespace MyASMCompiler {
         POP_REG,
 
         STR_REG_NUMBER,
+        STR_REG_REG,
+
         STW_REG_NUMBER,
+        STW_REG_REG,
 
         CALL_LABEL,
 
@@ -246,7 +249,10 @@ namespace MyASMCompiler {
         ///// IO /////
         INP_REG,
 
+        OUTI_NUMBER,
         OUTI_REG,
+
+        OUTC_NUMBER,
         OUTC_REG,
     }
 }

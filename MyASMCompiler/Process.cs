@@ -25,7 +25,7 @@ namespace MyASMCompiler {
             this.memory = code.StartDataValues;
             this.stack = new Stack (properties.MaxStackLength);
 
-            this.input = (input == null)? "" : input;
+            this.input = (input == null)? "\0" : input + "\0";
             this.inputIndex = 0;
         }
 
@@ -53,6 +53,7 @@ namespace MyASMCompiler {
             bool stop = false;
             bool hasOutput = false;
             bool jumpWasMade = false;
+            bool inputHasFinished = false;
             int nextIP = 0;
             string output = null;
 
@@ -307,10 +308,12 @@ namespace MyASMCompiler {
 
                 #region Stack read
                 case OpCodes.STR_REG_NUMBER: { registers[param1] = stack.read (param2); } break;
+                case OpCodes.STR_REG_REG: { registers[param1] = stack.read (registers[param2]); } break;
                 #endregion
 
                 #region Stack write
                 case OpCodes.STW_REG_NUMBER: { stack.write (registers[param1], param2); } break;
+                case OpCodes.STW_REG_REG: { stack.write (registers[param1], registers[param2]); } break;
                 #endregion
 
                 #region Call
@@ -343,14 +346,27 @@ namespace MyASMCompiler {
                 #endregion
 
                 #region Output Integer
+                case OpCodes.OUTI_NUMBER: {
+                    output = $"{param1} ";
+                    hasOutput = true;
+                } break;
+
                 case OpCodes.OUTI_REG: {
                     output = $"{registers[param1]} ";
                     hasOutput = true;
-                }
-                break;
+                } break;
                 #endregion
 
                 #region Output Character
+                case OpCodes.OUTC_NUMBER: {
+                    try {
+                        output = Convert.ToChar (param1).ToString ();
+                        hasOutput = true;
+                    } catch (OverflowException e) {
+                        throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {param1} cannot be converted to char");
+                    }
+                } break;
+
                 case OpCodes.OUTC_REG: {
                     try {
                         output = Convert.ToChar (registers[param1]).ToString ();
@@ -358,8 +374,7 @@ namespace MyASMCompiler {
                     } catch (OverflowException e) {
                         throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
                     }
-                }
-                break;
+                } break;
                 #endregion
 
 

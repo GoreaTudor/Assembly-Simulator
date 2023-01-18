@@ -27,7 +27,6 @@ namespace MyASMCompiler {
         }
 
         public static CurrentStatus step() {
-            Thread.Sleep (100);
             return process.next ();
         }
     }

@@ -19,8 +19,8 @@ namespace MyASMCompiler {
     public class Compiler {
 
         public static readonly Regex regex_validParam = new Regex (@"^([A-D]|(SP)|(BP)|([%]{0,1}[0-9]+))$");
-        public static readonly Regex regex_validLabel = new Regex (@"^[_a-zA-Z][\._a-zA-Z0-9]+$");
-        public static readonly Regex regex_validNumber = new Regex (@"^[\d]+$");
+        public static readonly Regex regex_validLabel = new Regex (@"^[\._a-zA-Z][\._a-zA-Z0-9]+$");
+        public static readonly Regex regex_validNumber = new Regex (@"^[+-]{0,1}[\d]+$");
 
 
         /// <summary>
@@ -715,11 +715,11 @@ namespace MyASMCompiler {
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
-                    if (param2.Type != ParamType.number) {
-                        throw new SintaxErrors.ParameterError ("STR second parameter must be a Number");
-                    }
                     instruction.Param2 = param2.Value;
-                    instruction.Opcode = OpCodes.STR_REG_NUMBER;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.STR_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.STR_REG_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("STR second parameter type should be a Number or a Register"); }
                 } break;
 
                 case "STW": {
@@ -732,11 +732,11 @@ namespace MyASMCompiler {
                     instruction.Param1 = param1.Value;
 
                     Parameter param2 = getParamTypeAndValue (compiledCode, param2_str);
-                    if (param2.Type != ParamType.number) {
-                        throw new SintaxErrors.ParameterError ("STW second parameter must be a Number");
-                    }
                     instruction.Param2 = param2.Value;
-                    instruction.Opcode = OpCodes.STW_REG_NUMBER;
+
+                    if (param2.Type == ParamType.number) { instruction.Opcode = OpCodes.STW_REG_NUMBER; } 
+                    else if (param2.Type == ParamType.register) { instruction.Opcode = OpCodes.STW_REG_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("STW second parameter type should be a Number or a Register"); }
                 } break;
 
                 case "CALL": {
@@ -774,22 +774,22 @@ namespace MyASMCompiler {
                     if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTI should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
-                    if (param.Type != ParamType.register) {
-                        throw new SintaxErrors.ParameterError ("OUTI parameter must be a Register");
-                    }
                     instruction.Param1 = param.Value;
-                    instruction.Opcode = OpCodes.OUTI_REG;
+
+                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTI_NUMBER; } 
+                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTI_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("OUTI parameter must be a Number or a Register"); }
                 } break;
 
                 case "OUTC": {
                     if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTC should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
-                    if (param.Type != ParamType.register) {
-                        throw new SintaxErrors.ParameterError ("OUTC parameter must be a Register");
-                    }
                     instruction.Param1 = param.Value;
-                    instruction.Opcode = OpCodes.OUTC_REG;
+
+                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTC_NUMBER; } 
+                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTC_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("OUTC parameter must be a Number or a Register"); }
                 } break;
                 #endregion
 

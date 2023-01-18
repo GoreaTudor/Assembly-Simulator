@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 using MyASMCompiler;
@@ -133,7 +133,7 @@ namespace AssemblySimulator.GUI {
         #region BackgroundWorker
         private void worker_DoWork (object sender, DoWorkEventArgs e) {
             var worker = sender as BackgroundWorker;
-            e.Result = false;
+            e.Result = "";
 
             bool wantsToStop = false;
 
@@ -143,10 +143,17 @@ namespace AssemblySimulator.GUI {
                     break;
                 }
 
-                CurrentStatus status = Runtime.step ();
-                wantsToStop = status.stop;
+                try {
+                    Thread.Sleep (100);
+                    CurrentStatus status = Runtime.step ();
+                    wantsToStop = status.stop;
 
-                worker.ReportProgress (0, status);
+                    worker.ReportProgress (0, status);
+
+                } catch (Exception ex) {
+                    e.Result = ex.Message;
+                    wantsToStop = true;
+                }
             } while (! wantsToStop);
         }
 
@@ -161,8 +168,15 @@ namespace AssemblySimulator.GUI {
                 log ("Paused");
 
             } else {
-                log ("HALTING...");
-                Runtime.stop ();
+                if ((string)e.Result == "") { // all fine
+                    log ("HALTING...");
+                    Runtime.stop ();
+
+                } else { // there was an error
+                    log ("Error: " + e.Result);
+                    log ("Force stopping...");
+                    Runtime.stop ();
+                }
             } 
         }
         #endregion
@@ -206,21 +220,27 @@ namespace AssemblySimulator.GUI {
                 Runtime.start (compiledCode, input);
             }
 
-            CurrentStatus status = Runtime.step ();
-            displayStatus (status);
+            try {
+                CurrentStatus status = Runtime.step ();
+                displayStatus (status);
 
-            if (status.stop) {
-                log ("HALTING");
+                if (status.stop) {
+                    log ("HALTING");
+                    Runtime.stop ();
+                }
+            } catch (Exception e) {
+                log ("Error: " + e.Message);
+                log ("Force stopping...");
                 Runtime.stop ();
-            }
+            }  
         }
 
         private void stop () {
             log ("Stopping...");
             if (! IsBuilt) { log ("Project not built"); return; }
-            if (IsPaused) { log ("Process is paused"); }
+            if (IsPaused) { log ("Process is paused"); return; }
 
-            if (!Runtime.IsProcessRunning) { log ("No process running"); }
+            if (! Runtime.IsProcessRunning) { log ("No process running"); return; }
 
             worker.CancelAsync ();
         }
@@ -240,7 +260,7 @@ namespace AssemblySimulator.GUI {
             this.memory = null;
             this.stack = null;
 
-            log ("Process & Memory RESET");
+            log ("Memory RESET");
         }
         #endregion
 
