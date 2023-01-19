@@ -18,7 +18,6 @@ namespace MyASMCompiler {
     /// </summary>
     public class Compiler {
 
-        public static readonly Regex regex_validParam = new Regex (@"^([A-D]|(SP)|(BP)|([%]{0,1}[0-9]+))$");
         public static readonly Regex regex_validLabel = new Regex (@"^[\._a-zA-Z][\._a-zA-Z0-9]+$");
         public static readonly Regex regex_validNumber = new Regex (@"^[+-]{0,1}[\d]+$");
 
@@ -701,7 +700,7 @@ namespace MyASMCompiler {
                     instruction.Param1 = param.Value;
 
                     if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.POP_NUMBER; }
-                    else if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.POP_REG; }
+                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.POP_REG; }
                     else { throw new SintaxErrors.ParameterError ("POP parameter must be a Register or a Number"); }
                 } break;
 
@@ -954,16 +953,24 @@ namespace MyASMCompiler {
         }
 
         protected static int? parseNumber (string input) {
-            if (input.StartsWith("0x")) {                                   // Hexa
-                return Convert.ToInt32 (value: input.Substring (startIndex: 2), fromBase: 16);
+            int sign = 1;
+            string number = input;
 
-            } else if (input.StartsWith("0b")) {                             // Binary
-                return Convert.ToInt32 (value: input.Substring (startIndex: 2), fromBase: 2);
+            if (input[0] == '+' || input[0] == '-') {  // has a sign specified
+                sign = (input[0] == '-') ? -1 : 1;
+                number = input.Substring (startIndex: 1);
+            }
 
-            } else if (regex_validNumber.IsMatch(input)) {   // Decimal
-                return int.Parse (input);
+            if (number.StartsWith("0x")) {                      // Hexa
+                return sign * Convert.ToInt32 (value: number.Substring (startIndex: 2), fromBase: 16);
 
-            } else {                                                        // Invalid format
+            } else if (number.StartsWith("0b")) {               // Binary
+                return sign * Convert.ToInt32 (value: number.Substring (startIndex: 2), fromBase: 2);
+
+            } else if (regex_validNumber.IsMatch(number)) {     // Decimal
+                return sign * int.Parse (number);
+
+            } else {                                            // Invalid format
                 return null;
             }
         }

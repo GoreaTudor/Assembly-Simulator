@@ -39,7 +39,7 @@ namespace MyASMCompiler {
             this.InstructionLabels = new Dictionary <string, int> ();
             this.DataLabels = new Dictionary <string, int> ();
             this.StartDataValues = new int[Runtime.setupProperties.MaxDataAddress];
-            this.NextAddressPointer = 0;
+            this.NextAddressPointer = 1; // 0 for null character
 
             for (int i = 0; i < StartDataValues.Length; i ++) {
                 StartDataValues[i] = 0;
@@ -50,18 +50,18 @@ namespace MyASMCompiler {
         public override string ToString () {
             string text = "code.ToString():";
 
-            text += "\r\nCode:";
+            text += "\r\n>>> Code:";
             int i = 0;
             foreach (var instr in Instructions) {
                 text += $"\r\ninstr {i++}: {instr.ToString()}";
             }
 
-            text += "\r\nInstruction Labels:";
+            text += "\r\n>>> Instruction Labels:";
             foreach (var pair in InstructionLabels) {
                 text += $"\r\n{pair.Key} - {pair.Value}";
             }
 
-            text += "\r\nData Labels:";
+            text += "\r\n>>> Data Labels:";
             foreach (var pair in DataLabels) {
                 text += $"\r\n{pair.Key} - {pair.Value}";
             }

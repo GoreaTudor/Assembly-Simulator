@@ -112,8 +112,7 @@ namespace MyASMCompiler {
     ///     <item>
     ///         IO:
     ///         <list type="bullet">
-    ///             <item> INPI dest => reads the next item, as an integer, and saves the value into dest </item>
-    ///             <item> INPC dest => reads the next item, as an character, and saves the value into dest </item>
+    ///             <item> INP dest => reads the next item, as an integer, and saves the value into dest </item>
     ///             <item> OUTI src => displays the char value of the src contents </item>
     ///             <item> OUTC src => displays the char value of the src contents </item>
     ///         </list>
