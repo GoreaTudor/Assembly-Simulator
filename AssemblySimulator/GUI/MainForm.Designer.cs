@@ -37,21 +37,23 @@ namespace AssemblySimulator.GUI {
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stepToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.consoleToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showBuiltCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tooldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showMemoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetOutputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txt_CodeArea = new System.Windows.Forms.TextBox();
@@ -71,7 +73,6 @@ namespace AssemblySimulator.GUI {
             this.txt_D = new System.Windows.Forms.TextBox();
             this.label_A = new System.Windows.Forms.Label();
             this.txt_console = new System.Windows.Forms.TextBox();
-            this.txt_lines = new System.Windows.Forms.TextBox();
             this.worker = new System.ComponentModel.BackgroundWorker();
             this.toolBar.SuspendLayout();
             this.menuBar.SuspendLayout();
@@ -118,6 +119,7 @@ namespace AssemblySimulator.GUI {
             this.btn_viewMemory.TabIndex = 4;
             this.btn_viewMemory.Text = "View Memory";
             this.btn_viewMemory.UseVisualStyleBackColor = false;
+            this.btn_viewMemory.Click += new System.EventHandler(this.btn_viewMemory_Click);
             // 
             // btn_stop
             // 
@@ -176,8 +178,8 @@ namespace AssemblySimulator.GUI {
             this.menuBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.editToolStripMenuItem,
             this.projectToolStripMenuItem,
+            this.consoleToolStripMenuItem1,
             this.tooldToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuBar.Location = new System.Drawing.Point(0, 0);
@@ -194,7 +196,6 @@ namespace AssemblySimulator.GUI {
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
-            this.closeToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
@@ -228,13 +229,6 @@ namespace AssemblySimulator.GUI {
             this.saveAsToolStripMenuItem.Text = "Save As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
-            this.closeToolStripMenuItem.Text = "Close";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
@@ -242,20 +236,14 @@ namespace AssemblySimulator.GUI {
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(59, 24);
-            this.editToolStripMenuItem.Text = "Edit";
-            // 
             // projectToolStripMenuItem
             // 
             this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buildToolStripMenuItem,
-            this.buildStartToolStripMenuItem,
             this.startToolStripMenuItem,
             this.stepToolStripMenuItem,
-            this.stopToolStripMenuItem});
+            this.stopToolStripMenuItem,
+            this.resetToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
             this.projectToolStripMenuItem.Text = "Build";
@@ -263,38 +251,67 @@ namespace AssemblySimulator.GUI {
             // buildToolStripMenuItem
             // 
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
-            this.buildToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
             this.buildToolStripMenuItem.Text = "Compile";
-            // 
-            // buildStartToolStripMenuItem
-            // 
-            this.buildStartToolStripMenuItem.Name = "buildStartToolStripMenuItem";
-            this.buildStartToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
-            this.buildStartToolStripMenuItem.Text = "Compile and Start";
+            this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
             // 
             // startToolStripMenuItem
             // 
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
             this.startToolStripMenuItem.Text = "Start";
+            this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
             // stepToolStripMenuItem
             // 
             this.stepToolStripMenuItem.Name = "stepToolStripMenuItem";
-            this.stepToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.stepToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
             this.stepToolStripMenuItem.Text = "Stop";
+            this.stepToolStripMenuItem.Click += new System.EventHandler(this.stepToolStripMenuItem_Click);
             // 
             // stopToolStripMenuItem
             // 
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
             this.stopToolStripMenuItem.Text = "Step into";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
+            this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            // 
+            // consoleToolStripMenuItem1
+            // 
+            this.consoleToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearConsoleToolStripMenuItem,
+            this.showBuiltCodeToolStripMenuItem});
+            this.consoleToolStripMenuItem1.Name = "consoleToolStripMenuItem1";
+            this.consoleToolStripMenuItem1.Size = new System.Drawing.Size(86, 24);
+            this.consoleToolStripMenuItem1.Text = "Console";
+            // 
+            // clearConsoleToolStripMenuItem
+            // 
+            this.clearConsoleToolStripMenuItem.Name = "clearConsoleToolStripMenuItem";
+            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 26);
+            this.clearConsoleToolStripMenuItem.Text = "Clear Console";
+            this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
+            // 
+            // showBuiltCodeToolStripMenuItem
+            // 
+            this.showBuiltCodeToolStripMenuItem.Name = "showBuiltCodeToolStripMenuItem";
+            this.showBuiltCodeToolStripMenuItem.Size = new System.Drawing.Size(227, 26);
+            this.showBuiltCodeToolStripMenuItem.Text = "Show Built Code";
+            this.showBuiltCodeToolStripMenuItem.Click += new System.EventHandler(this.showBuiltCodeToolStripMenuItem_Click);
             // 
             // tooldToolStripMenuItem
             // 
             this.tooldToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearToolStripMenuItem,
-            this.showMemoryToolStripMenuItem});
+            this.showMemoryToolStripMenuItem,
+            this.resetOutputToolStripMenuItem});
             this.tooldToolStripMenuItem.Name = "tooldToolStripMenuItem";
             this.tooldToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
             this.tooldToolStripMenuItem.Text = "Tools";
@@ -306,7 +323,7 @@ namespace AssemblySimulator.GUI {
             this.outputToolStripMenuItem,
             this.inputToolStripMenuItem});
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(191, 26);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(200, 26);
             this.clearToolStripMenuItem.Text = "Clear";
             // 
             // consoleToolStripMenuItem
@@ -333,9 +350,16 @@ namespace AssemblySimulator.GUI {
             // showMemoryToolStripMenuItem
             // 
             this.showMemoryToolStripMenuItem.Name = "showMemoryToolStripMenuItem";
-            this.showMemoryToolStripMenuItem.Size = new System.Drawing.Size(191, 26);
+            this.showMemoryToolStripMenuItem.Size = new System.Drawing.Size(200, 26);
             this.showMemoryToolStripMenuItem.Text = "Show Memory";
             this.showMemoryToolStripMenuItem.Click += new System.EventHandler(this.showMemoryToolStripMenuItem_Click);
+            // 
+            // resetOutputToolStripMenuItem
+            // 
+            this.resetOutputToolStripMenuItem.Name = "resetOutputToolStripMenuItem";
+            this.resetOutputToolStripMenuItem.Size = new System.Drawing.Size(200, 26);
+            this.resetOutputToolStripMenuItem.Text = "Reset Output";
+            this.resetOutputToolStripMenuItem.Click += new System.EventHandler(this.resetOutputToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -360,11 +384,11 @@ namespace AssemblySimulator.GUI {
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_CodeArea.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.txt_CodeArea.ForeColor = System.Drawing.Color.Black;
-            this.txt_CodeArea.Location = new System.Drawing.Point(51, 90);
+            this.txt_CodeArea.Location = new System.Drawing.Point(4, 90);
             this.txt_CodeArea.Multiline = true;
             this.txt_CodeArea.Name = "txt_CodeArea";
             this.txt_CodeArea.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt_CodeArea.Size = new System.Drawing.Size(812, 434);
+            this.txt_CodeArea.Size = new System.Drawing.Size(859, 434);
             this.txt_CodeArea.TabIndex = 0;
             this.txt_CodeArea.Text = "Code goes here";
             // 
@@ -537,18 +561,6 @@ namespace AssemblySimulator.GUI {
             this.txt_console.TabIndex = 3;
             this.txt_console.Text = "Console (Events Log)";
             // 
-            // txt_lines
-            // 
-            this.txt_lines.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.txt_lines.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.txt_lines.Enabled = false;
-            this.txt_lines.Location = new System.Drawing.Point(4, 90);
-            this.txt_lines.Multiline = true;
-            this.txt_lines.Name = "txt_lines";
-            this.txt_lines.Size = new System.Drawing.Size(50, 434);
-            this.txt_lines.TabIndex = 5;
-            // 
             // worker
             // 
             this.worker.WorkerReportsProgress = true;
@@ -563,7 +575,6 @@ namespace AssemblySimulator.GUI {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(1290, 680);
-            this.Controls.Add(this.txt_lines);
             this.Controls.Add(this.txt_console);
             this.Controls.Add(this.panel_data);
             this.Controls.Add(this.txt_CodeArea);
@@ -595,12 +606,10 @@ namespace AssemblySimulator.GUI {
         private System.Windows.Forms.Button btn_start;
         private System.Windows.Forms.MenuStrip menuBar;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.TextBox txt_CodeArea;
         private System.Windows.Forms.Panel panel_data;
         private System.Windows.Forms.TextBox txt_A;
@@ -619,11 +628,9 @@ namespace AssemblySimulator.GUI {
         private System.Windows.Forms.TextBox txt_output;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.TextBox txt_console;
-        private System.Windows.Forms.TextBox txt_lines;
         private System.Windows.Forms.Button btn_stop;
         private System.Windows.Forms.ToolStripMenuItem projectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem buildStartToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stepToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
@@ -638,5 +645,10 @@ namespace AssemblySimulator.GUI {
         private System.Windows.Forms.ToolStripMenuItem showMemoryToolStripMenuItem;
         private System.Windows.Forms.Button btn_viewMemory;
         private System.Windows.Forms.Button btn_reset;
+        private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showBuiltCodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetOutputToolStripMenuItem;
     }
 }

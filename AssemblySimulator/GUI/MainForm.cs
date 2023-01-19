@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -12,6 +13,9 @@ using MyASMCompiler;
 
 namespace AssemblySimulator.GUI {
     public partial class MainForm : Form {
+
+        private string filepath = null;
+        private readonly string fileFilter = "All files (*.*)|*.myasm";
 
         private CompiledCode compiledCode = null;
         public bool IsBuilt { get { return (compiledCode != null); } }
@@ -63,33 +67,35 @@ namespace AssemblySimulator.GUI {
             }
         }
 
-        private void drawLines (int nrOfLines) {
-            this.txt_lines.Text = "";
-
-            for (int i = 1; i <= nrOfLines; i++) {
-                this.txt_lines.Text += $"{i}:\r\n";
-            }
-        }
-
 
         #region Click Events
         private void btn_compile_Click (object sender, EventArgs e) => compile ();
         private void btn_start_Click (object sender, EventArgs e) => start ();
         private void btn_step_Click (object sender, EventArgs e) => step ();
         private void btn_stop_Click (object sender, EventArgs e) => stop ();
-        private void btn_reset_Click (object sender, EventArgs e) => reset ();
+        private void btn_reset_Click (object sender, EventArgs e) => resetMemoryAndRegisters ();
+        private void btn_viewMemory_Click (object sender, EventArgs e) => showMemory ();
 
         private void newToolStripMenuItem_Click (object sender, EventArgs e) => newFile ();
         private void openToolStripMenuItem_Click (object sender, EventArgs e) => openFile ();
         private void saveToolStripMenuItem_Click (object sender, EventArgs e) => saveFile ();
         private void saveAsToolStripMenuItem_Click (object sender, EventArgs e) => saveFileAs ();
-        private void closeToolStripMenuItem_Click (object sender, EventArgs e) => closeFile ();
         private void exitToolStripMenuItem_Click (object sender, EventArgs e) => exit ();
+
+        private void buildToolStripMenuItem_Click (object sender, EventArgs e) => compile ();
+        private void startToolStripMenuItem_Click (object sender, EventArgs e) => start ();
+        private void stepToolStripMenuItem_Click (object sender, EventArgs e) => step ();
+        private void stopToolStripMenuItem_Click (object sender, EventArgs e) => stop ();
+        private void resetToolStripMenuItem_Click (object sender, EventArgs e) => resetMemoryAndRegisters ();
+
+        private void clearConsoleToolStripMenuItem_Click (object sender, EventArgs e) => clearConsole ();
+        private void showBuiltCodeToolStripMenuItem_Click (object sender, EventArgs e) => showBuiltCode ();
 
         private void consoleToolStripMenuItem_Click (object sender, EventArgs e) => clearConsole ();
         private void outputToolStripMenuItem_Click (object sender, EventArgs e) => clearOutput ();
         private void inputToolStripMenuItem_Click (object sender, EventArgs e) => clearInput ();
         private void showMemoryToolStripMenuItem_Click (object sender, EventArgs e) => showMemory ();
+        private void resetOutputToolStripMenuItem_Click (object sender, EventArgs e) => resetMemoryAndRegisters ();
 
         private void documentationToolStripMenuItem_Click (object sender, EventArgs e) => documentation ();
         #endregion
@@ -99,32 +105,71 @@ namespace AssemblySimulator.GUI {
 
         #region File
         private void newFile () {
-            ;
+            log ("New file");
+            this.compiledCode = null;
+            this.txt_CodeArea.Text = "";
+            this.filepath = null;
+            resetMemoryAndRegisters ();
         }
 
         private void openFile () {
-            ;
+            log ("Opening...");
+            OpenFileDialog fileDialog = new OpenFileDialog {
+                Filter = fileFilter  // force extension
+            };
+
+            if (fileDialog.ShowDialog () == DialogResult.OK) {
+                this.filepath = fileDialog.FileName;
+                log ("Filepath: " + this.filepath);
+
+                string fileContent;
+
+                using (StreamReader reader = new StreamReader (this.filepath)) {
+                    fileContent = reader.ReadToEnd ();
+                    this.txt_CodeArea.Text = fileContent;
+
+                    this.compiledCode = null;
+                    resetMemoryAndRegisters ();
+
+                    log ("Opened");
+                } 
+            }
         }
 
         private void saveFile () {
-            ;
+            log ("Saving...");
+            if (filepath == null) { saveFileAs (); }
+
+            string fileContent = this.txt_CodeArea.Text;
+
+            using (StreamWriter writer = new StreamWriter(this.filepath)) {
+                writer.Write (fileContent);
+                log ("Saved");
+            }
         }
 
         private void saveFileAs () {
-            ;
-        }
+            log ("Saving as...");
+            SaveFileDialog fileDialog = new SaveFileDialog {
+                Filter = fileFilter  // force extension
+            };
 
-        private void closeFile () {
-            ;
+            if (fileDialog.ShowDialog() == DialogResult.OK) {
+                this.filepath = fileDialog.FileName;
+                log ("Filepath: " + this.filepath);
+
+                string fileContent = this.txt_CodeArea.Text;
+
+                using (StreamWriter writer = new StreamWriter(this.filepath)) {
+                    writer.Write (fileContent);
+                    log ("Saved As");
+                }
+            }
         }
 
         private void exit () {
-            ;
+            this.Close ();
         }
-        #endregion
-
-
-        #region Edit
         #endregion
 
 
@@ -144,7 +189,7 @@ namespace AssemblySimulator.GUI {
                 }
 
                 try {
-                    Thread.Sleep (100);
+                    Thread.Sleep (50);
                     CurrentStatus status = Runtime.step ();
                     wantsToStop = status.stop;
 
@@ -184,12 +229,11 @@ namespace AssemblySimulator.GUI {
         private void compile () {
             log ("building...");
             string[] lines = txt_CodeArea.Lines;
-            this.drawLines (lines.Length);
 
             try {
                 compiledCode = Compiler.compile (lines);
                 log ("Project built.");
-                log (compiledCode.ToString ());
+                //log (compiledCode.ToString ());
 
             } catch (Exception ex) {
                 log (ex.Message);
@@ -204,6 +248,7 @@ namespace AssemblySimulator.GUI {
             if (!Runtime.IsProcessRunning) {
                 string input = this.txt_input.Text;
                 Runtime.start (compiledCode, input);
+                resetMemoryAndRegisters ();
             }
 
             IsPaused = false;
@@ -218,6 +263,7 @@ namespace AssemblySimulator.GUI {
             if (! Runtime.IsProcessRunning) {
                 string input = this.txt_input.Text;
                 Runtime.start (compiledCode, input);
+                resetMemoryAndRegisters ();
             }
 
             try {
@@ -245,12 +291,7 @@ namespace AssemblySimulator.GUI {
             worker.CancelAsync ();
         }
 
-        private void reset () {
-            if (Runtime.IsProcessRunning) {
-                Runtime.stop ();
-            }
-            IsPaused = true;
-
+        private void resetMemoryAndRegisters () {
             this.txt_output.Text = "";
             this.txt_A.Text = "0";
             this.txt_B.Text = "0";
@@ -265,8 +306,13 @@ namespace AssemblySimulator.GUI {
         #endregion
 
 
-        #region Tools
+        #region Console
         private void clearConsole () => this.txt_console.Text = $"> {DateTime.Now}: Console cleared.\r\n";
+        private void showBuiltCode () => log (this.compiledCode.ToString());
+        #endregion
+
+
+        #region Tools
         private void clearOutput () => this.txt_output.Text = "";
         private void clearInput () => this.txt_input.Text = "";
 
@@ -281,6 +327,7 @@ namespace AssemblySimulator.GUI {
         private void documentation () {
             ;
         }
+
         #endregion
 
     }
