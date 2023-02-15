@@ -317,7 +317,7 @@ namespace AssemblySimulator.GUI {
         private void clearInput () => this.txt_input.Text = "";
 
         private void showMemory () {
-            Form form = new ViewMemoryFrom ();
+            Form form = new ViewMemoryFrom (this.memory, this.stack);
             form.ShowDialog ();
         }
         #endregion
@@ -325,9 +325,8 @@ namespace AssemblySimulator.GUI {
 
         #region Help
         private void documentation () {
-            ;
+            System.Diagnostics.Process.Start ("https://github.com/GoreaTudor/Assembly-Simulator/blob/main/README.md");
         }
-
         #endregion
 
     }

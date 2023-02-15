@@ -68,5 +68,9 @@ namespace MyASMCompiler {
 
             return text;
         }
+
+        public int[] getStack() {
+            return this.stack;
+        }
     }
 }
