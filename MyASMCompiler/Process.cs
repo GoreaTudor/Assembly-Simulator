@@ -347,12 +347,12 @@ namespace MyASMCompiler {
 
                 #region Output Integer
                 case OpCodes.OUTI_NUMBER: {
-                    output = $"{param1} ";
+                    output = $"{param1}";
                     hasOutput = true;
                 } break;
 
                 case OpCodes.OUTI_REG: {
-                    output = $"{registers[param1]} ";
+                    output = $"{registers[param1]}";
                     hasOutput = true;
                 } break;
                 #endregion

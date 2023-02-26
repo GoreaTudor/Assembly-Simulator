@@ -18,7 +18,7 @@ namespace MyASMCompiler {
     /// </summary>
     public class Compiler {
 
-        public static readonly Regex regex_validLabel = new Regex (@"^[\._a-zA-Z][\._a-zA-Z0-9]+$");
+        public static readonly Regex regex_validLabel = new Regex (@"^[\._a-zA-Z][\._a-zA-Z0-9]*$");
         public static readonly Regex regex_validNumber = new Regex (@"^[+-]{0,1}[\d]+$");
 
 
@@ -899,7 +899,7 @@ namespace MyASMCompiler {
                         return new Parameter { Type = ParamType.address, Value = dataLabelValue.Value };
                     }
 
-                    throw new SintaxErrors.ParameterError ("Invalid format for address type (with [])");
+                    throw new SintaxErrors.ParameterError ("Invalid label for address type (with [])");
                 }
 
                 case '\'': { // 'C'
@@ -932,7 +932,7 @@ namespace MyASMCompiler {
                         return new Parameter { Type = ParamType.number, Value = dataLabelValue.Value };
                     }
 
-                    throw new SintaxErrors.ParameterError ("Invalid format for simple type (without [])");
+                    throw new SintaxErrors.ParameterError ("Invalid label for simple type (without [])");
                 }
             }
         }

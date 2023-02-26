@@ -63,7 +63,7 @@ namespace AssemblySimulator.GUI {
             log ("Next instr: " + ((status.instruction != null) ? status.instruction.ToString() : "-"));
 
             if (status.hasOutput) {
-                this.txt_output.Text += status.output;
+                this.txt_output.AppendText(status.output);
             }
         }
 
@@ -73,7 +73,7 @@ namespace AssemblySimulator.GUI {
         private void btn_start_Click (object sender, EventArgs e) => start ();
         private void btn_step_Click (object sender, EventArgs e) => step ();
         private void btn_stop_Click (object sender, EventArgs e) => stop ();
-        private void btn_reset_Click (object sender, EventArgs e) => resetMemoryAndRegisters ();
+        private void btn_reset_Click (object sender, EventArgs e) => reset ();
         private void btn_viewMemory_Click (object sender, EventArgs e) => showMemory ();
 
         private void newToolStripMenuItem_Click (object sender, EventArgs e) => newFile ();
@@ -189,7 +189,7 @@ namespace AssemblySimulator.GUI {
                 }
 
                 try {
-                    Thread.Sleep (50);
+                    Thread.Sleep (10);
                     CurrentStatus status = Runtime.step ();
                     wantsToStop = status.stop;
 
@@ -232,7 +232,7 @@ namespace AssemblySimulator.GUI {
 
             try {
                 compiledCode = Compiler.compile (lines);
-                log ("Project built.");
+                log ("<Build>: Project built.");
                 //log (compiledCode.ToString ());
 
             } catch (Exception ex) {
@@ -242,8 +242,8 @@ namespace AssemblySimulator.GUI {
 
         private void start () {
             log ("Starting...");
-            if (! IsBuilt) { log ("Project not built"); return; }
-            if (! IsPaused) { log ("Process not paused"); return; }
+            if (! IsBuilt) { log ("<Start>: Project not built"); return; }
+            if (! IsPaused) { log ("<Start>: Process not paused"); return; }
 
             if (!Runtime.IsProcessRunning) {
                 string input = this.txt_input.Text;
@@ -257,8 +257,8 @@ namespace AssemblySimulator.GUI {
 
         private void step () {
             log ("Stepping...");
-            if (! IsBuilt) { log ("Project not built"); return; }
-            if (! IsPaused) { log ("Process not paused"); return; }
+            if (! IsBuilt) { log ("<Step>: Project not built"); return; }
+            if (! IsPaused) { log ("<Step>: Process not paused"); return; }
 
             if (! Runtime.IsProcessRunning) {
                 string input = this.txt_input.Text;
@@ -271,11 +271,11 @@ namespace AssemblySimulator.GUI {
                 displayStatus (status);
 
                 if (status.stop) {
-                    log ("HALTING");
+                    log ("<Step>: HALTING");
                     Runtime.stop ();
                 }
             } catch (Exception e) {
-                log ("Error: " + e.Message);
+                log ("<Step>: " + e.Message);
                 log ("Force stopping...");
                 Runtime.stop ();
             }  
@@ -283,12 +283,23 @@ namespace AssemblySimulator.GUI {
 
         private void stop () {
             log ("Stopping...");
-            if (! IsBuilt) { log ("Project not built"); return; }
-            if (IsPaused) { log ("Process is paused"); return; }
+            if (! IsBuilt) { log ("<Stop>: Project not built"); return; }
+            if (IsPaused) { log ("<Stop>: Process is paused"); return; }
 
-            if (! Runtime.IsProcessRunning) { log ("No process running"); return; }
+            if (! Runtime.IsProcessRunning) { log ("<Stop>: No process running"); return; }
 
             worker.CancelAsync ();
+        }
+
+        private void reset () {
+            try {
+                Runtime.stop ();
+                resetMemoryAndRegisters ();
+                log ("<Reset>: Process reset");
+
+            } catch (Exception e) {
+                log ("<Reset>: " + e.Message);
+            }
         }
 
         private void resetMemoryAndRegisters () {
@@ -301,7 +312,7 @@ namespace AssemblySimulator.GUI {
             this.memory = null;
             this.stack = null;
 
-            log ("Memory RESET");
+            log ("Memory & Registers RESET");
         }
         #endregion
 
