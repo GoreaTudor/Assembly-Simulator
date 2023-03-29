@@ -16,7 +16,7 @@ namespace MyASMCompiler.UnitTests.InstructionTests {
             Console.WriteLine (instr.ToString());
             return (
                 instr.Opcode == opCode &&
-                instr.Param1 == 0 &&
+                instr.Param1 == 1 &&
                 instr.Param2 == null &&
                 instr.Label == null
             );
@@ -24,18 +24,51 @@ namespace MyASMCompiler.UnitTests.InstructionTests {
 
         [TestMethod]
         public void INP_REG__test () {
-            Assert.IsTrue (IO_1_param (new string[] { "INP A" }, OpCodes.INP_REG));
+            Assert.IsTrue (IO_1_param (new string[] { "INP B" }, OpCodes.INP_REG));
+        }
+
+
+        [TestMethod]
+        public void OUTD_NR__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTD 1" }, OpCodes.OUTD_NUMBER));
         }
 
         [TestMethod]
-        public void OUTI_REG__test () {
-            Assert.IsTrue (IO_1_param (new string[] { "OUTI A" }, OpCodes.OUTI_REG));
+        public void OUTD_REG__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTD B" }, OpCodes.OUTD_REG));
+        }
+
+
+        [TestMethod]
+        public void OUTC_NR__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTC 1" }, OpCodes.OUTC_NUMBER));
         }
 
         [TestMethod]
         public void OUTC_REG__test () {
-            Assert.IsTrue (IO_1_param (new string[] { "OUTC A" }, OpCodes.OUTC_REG));
+            Assert.IsTrue (IO_1_param (new string[] { "OUTC B" }, OpCodes.OUTC_REG));
         }
 
+
+        [TestMethod]
+        public void OUTB_NR__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTB 1" }, OpCodes.OUTB_NUMBER));
+        }
+
+        [TestMethod]
+        public void OUTB_REG__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTB B" }, OpCodes.OUTB_REG));
+        }
+
+
+        [TestMethod]
+        public void OUTH_NR__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTH 1" }, OpCodes.OUTH_NUMBER));
+        }
+
+        [TestMethod]
+        public void OUTH_REG__test () {
+            Assert.IsTrue (IO_1_param (new string[] { "OUTH B" }, OpCodes.OUTH_REG));
+        }
     }
 }

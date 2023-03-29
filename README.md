@@ -1,14 +1,22 @@
 # Assembly-Simulator
 
-## Instruction Set:
+## Language rules:
 
-### Parameter Types:
+General line format:
+```
+    label: instruction operand_1, operand_2 # comment
+```
+where the label refers to the instruction labels (used to jump to instructions), not to be confused by data labels.
+
+Operand Types:
     * reg  --  Register (General registers: A, B, C, D) (Special registers (cannot be used): Stack Pointer (SP), Instruction Pointer (IP))
-    * nr   --  Number (12, 23, 0x2f, -43, 0b1101, nr1, nr2) ( where "nr1" and "nr2" are data labels )
-    * addr --  Address (\[123\], \[0x6f\], \[0b10010\], \[nr1\], \[nr2\])
-    * ptr  --  Pointer (Addresses using genereal registers: \[A\], \[B\], \[C\], \[D\])
+    * nr   --  Number (12, 23, 0x2f, -43, 0b1101, nr1, nr2, 'A', 'b') ( where "nr1" and "nr2" are data labels, even characters are considered numbers by their ASCII code )
+    * addr --  Address (\[123\], \[0x6f\], \[0b10010\], \[nr1\], \[nr2\], ~~ \['A'\] ~~) (Characters are not allowed here)
+    * ptr  --  Pointer (Addresses using general registers: \[A\], \[B\], \[C\], \[D\])
     * lbl  --  Label, can be an instruction label, or a data label
-    * data --  Data, can be a "String", or a number (12, 0x6f, 0b1101), or a character ('C')
+
+
+## Instruction Set:
 
 0. Important Instructions:
     * HLT  --  Stopps the process. Has no parameters
@@ -24,11 +32,15 @@
         - MOV addr, nr
         - MOV addr, reg
 
-    * DB/DEF data, lbl*  --  Defines the initial data that will be used in the Runtime phase. The label is optional.
-        - DEF data, lbl
-        - DEF data
-        - DB data, lbl
-        - DB data
+    * DB/DEF data, lbl*  --  Defines the initial data that will be used in the Runtime phase. The label is optional, and it creates a refference to the beginning of the data, also called data label. (A data label MUST be defined before it is used, unlike instruction labels that can be defined anywhere throughout the code)
+        - DEF str, lbl
+        - DEF str
+        - DEF nr, lbl
+        - DEF nr
+        - DB str, lbl
+        - DB str
+        - DB nr, lbl
+        - DB nr
 
 
 2. Arithmetic Instructions:
@@ -95,7 +107,7 @@
         - NOT reg
 
 
-4. Branch Instructions:
+4. Branch Instructions (The labels here represent instruction labels):
     * JMP dest  --  Jumps to a specific instruction label
         - JMP lbl
 
@@ -181,10 +193,18 @@
     * INP dest  --  Reads the next character from the input and saves it's ASCII value into dest
         - INP reg
 
-    * OUTI src  --  Prints the integer value of the src 
-        - OUTI nr
-        - OUTI reg
+    * OUTD src  --  Prints the decimal value of the src 
+        - OUTD nr
+        - OUTD reg
 
     * OUTC src  --  Prints the character with the ASCII code of src 
-        - OUTI nr
-        - OUTI reg
+        - OUTC nr
+        - OUTC reg
+
+    * OUTB src  --  Prints the binary value of the src 
+        - OUTB nr
+        - OUTB reg
+
+    * OUTH src  --  Prints the hexadecimal value of the src 
+        - OUTH nr
+        - OUTH reg

@@ -346,12 +346,12 @@ namespace MyASMCompiler {
                 #endregion
 
                 #region Output Integer
-                case OpCodes.OUTI_NUMBER: {
+                case OpCodes.OUTD_NUMBER: {
                     output = $"{param1}";
                     hasOutput = true;
                 } break;
 
-                case OpCodes.OUTI_REG: {
+                case OpCodes.OUTD_REG: {
                     output = $"{registers[param1]}";
                     hasOutput = true;
                 } break;
@@ -375,6 +375,50 @@ namespace MyASMCompiler {
                         throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
                     }
                 } break;
+                #endregion
+
+                #region Output Binary
+                case OpCodes.OUTB_NUMBER: {
+                    try {
+                        output = Convert.ToString (value: param1, toBase: 2);
+                        hasOutput = true;
+                    } catch (OverflowException e) {
+                        throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {param1} cannot be converted to char");
+                    }
+                }
+                break;
+
+                case OpCodes.OUTB_REG: {
+                    try {
+                        output = Convert.ToString (value: registers[param1], toBase: 2);
+                        hasOutput = true;
+                    } catch (OverflowException e) {
+                        throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
+                    }
+                }
+                break;
+                #endregion
+
+                #region Output Binary
+                case OpCodes.OUTH_NUMBER: {
+                    try {
+                        output = Convert.ToString (value: param1, toBase: 16);
+                        hasOutput = true;
+                    } catch (OverflowException e) {
+                        throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {param1} cannot be converted to char");
+                    }
+                }
+                break;
+
+                case OpCodes.OUTH_REG: {
+                    try {
+                        output = Convert.ToString (value: registers[param1], toBase: 16);
+                        hasOutput = true;
+                    } catch (OverflowException e) {
+                        throw new Errors.RuntimeErrors.IntToCharOverflow ($"Value {registers[param1]} cannot be converted to char");
+                    }
+                }
+                break;
                 #endregion
 
 

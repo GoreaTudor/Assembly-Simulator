@@ -769,15 +769,15 @@ namespace MyASMCompiler {
                     instruction.Opcode = OpCodes.INP_REG;
                 } break;
 
-                case "OUTI": {
-                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTI should have 1 parameter"); }
+                case "OUTD": {
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTD should have 1 parameter"); }
 
                     Parameter param = getParamTypeAndValue (compiledCode, param1_str);
                     instruction.Param1 = param.Value;
 
-                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTI_NUMBER; } 
-                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTI_REG; } 
-                    else { throw new SintaxErrors.ParameterError ("OUTI parameter must be a Number or a Register"); }
+                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTD_NUMBER; } 
+                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTD_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("OUTD parameter must be a Number or a Register"); }
                 } break;
 
                 case "OUTC": {
@@ -789,6 +789,28 @@ namespace MyASMCompiler {
                     if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTC_NUMBER; } 
                     else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTC_REG; } 
                     else { throw new SintaxErrors.ParameterError ("OUTC parameter must be a Number or a Register"); }
+                } break;
+
+                case "OUTB": {
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTB should have 1 parameter"); }
+
+                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param1 = param.Value;
+
+                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTB_NUMBER; } 
+                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTB_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("OUTB parameter must be a Number or a Register"); }
+                } break;
+
+                case "OUTH": {
+                    if (param1_str == null || param2_str != null) { throw new SintaxErrors.OperationError ("OUTH should have 1 parameter"); }
+
+                    Parameter param = getParamTypeAndValue (compiledCode, param1_str);
+                    instruction.Param1 = param.Value;
+
+                    if (param.Type == ParamType.number) { instruction.Opcode = OpCodes.OUTH_NUMBER; } 
+                    else if (param.Type == ParamType.register) { instruction.Opcode = OpCodes.OUTH_REG; } 
+                    else { throw new SintaxErrors.ParameterError ("OUTH parameter must be a Number or a Register"); }
                 } break;
                 #endregion
 

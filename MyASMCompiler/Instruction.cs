@@ -248,10 +248,16 @@ namespace MyASMCompiler {
         ///// IO /////
         INP_REG,
 
-        OUTI_NUMBER,
-        OUTI_REG,
+        OUTD_NUMBER,
+        OUTD_REG,
 
         OUTC_NUMBER,
         OUTC_REG,
+
+        OUTB_NUMBER,
+        OUTB_REG,
+
+        OUTH_NUMBER,
+        OUTH_REG
     }
 }
