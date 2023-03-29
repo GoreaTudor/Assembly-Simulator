@@ -100,7 +100,7 @@ namespace AssemblySimulator.GUI {
             // btn_reset
             // 
             this.btn_reset.BackColor = System.Drawing.Color.Red;
-            this.btn_reset.Location = new System.Drawing.Point(353, 4);
+            this.btn_reset.Location = new System.Drawing.Point(373, 4);
             this.btn_reset.Name = "btn_reset";
             this.btn_reset.Size = new System.Drawing.Size(80, 40);
             this.btn_reset.TabIndex = 5;
@@ -124,7 +124,7 @@ namespace AssemblySimulator.GUI {
             // btn_stop
             // 
             this.btn_stop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.btn_stop.Location = new System.Drawing.Point(267, 4);
+            this.btn_stop.Location = new System.Drawing.Point(287, 4);
             this.btn_stop.Name = "btn_stop";
             this.btn_stop.Size = new System.Drawing.Size(80, 40);
             this.btn_stop.TabIndex = 3;
@@ -136,7 +136,7 @@ namespace AssemblySimulator.GUI {
             // 
             this.btn_step.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.btn_step.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_step.Location = new System.Drawing.Point(180, 4);
+            this.btn_step.Location = new System.Drawing.Point(200, 4);
             this.btn_step.Margin = new System.Windows.Forms.Padding(4);
             this.btn_step.Name = "btn_step";
             this.btn_step.Size = new System.Drawing.Size(80, 40);
@@ -149,7 +149,7 @@ namespace AssemblySimulator.GUI {
             // 
             this.btn_start.BackColor = System.Drawing.Color.Lime;
             this.btn_start.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_start.Location = new System.Drawing.Point(92, 4);
+            this.btn_start.Location = new System.Drawing.Point(112, 4);
             this.btn_start.Margin = new System.Windows.Forms.Padding(4);
             this.btn_start.Name = "btn_start";
             this.btn_start.Size = new System.Drawing.Size(80, 40);
@@ -165,9 +165,9 @@ namespace AssemblySimulator.GUI {
             this.btn_compile.Location = new System.Drawing.Point(4, 4);
             this.btn_compile.Margin = new System.Windows.Forms.Padding(4);
             this.btn_compile.Name = "btn_compile";
-            this.btn_compile.Size = new System.Drawing.Size(80, 40);
+            this.btn_compile.Size = new System.Drawing.Size(100, 40);
             this.btn_compile.TabIndex = 0;
-            this.btn_compile.Text = "Compile";
+            this.btn_compile.Text = "Assemble";
             this.btn_compile.UseVisualStyleBackColor = false;
             this.btn_compile.Click += new System.EventHandler(this.btn_compile_Click);
             // 
@@ -251,8 +251,8 @@ namespace AssemblySimulator.GUI {
             // buildToolStripMenuItem
             // 
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
-            this.buildToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
-            this.buildToolStripMenuItem.Text = "Compile";
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.buildToolStripMenuItem.Text = "Assemble";
             this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
             // 
             // startToolStripMenuItem
