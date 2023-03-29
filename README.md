@@ -9,12 +9,13 @@ General line format:
 where the label refers to the instruction labels (used to jump to instructions), not to be confused by data labels.
 
 Operand Types:
+```
     * reg  --  Register (General registers: A, B, C, D) (Special registers (cannot be used): Stack Pointer (SP), Instruction Pointer (IP))
     * nr   --  Number (12, 23, 0x2f, -43, 0b1101, nr1, nr2, 'A', 'b') ( where "nr1" and "nr2" are data labels, even characters are considered numbers by their ASCII code )
-    * addr --  Address (\[123\], \[0x6f\], \[0b10010\], \[nr1\], \[nr2\], ~~ \['A'\] ~~) (Characters are not allowed here)
-    * ptr  --  Pointer (Addresses using general registers: \[A\], \[B\], \[C\], \[D\])
+    * adr --  adress (\[123\], \[0x6f\], \[0b10010\], \[nr1\], \[nr2\], ~~ \['A'\] ~~) (Characters are not allowed here)
+    * ptr  --  Pointer (adresses using general registers: \[A\], \[B\], \[C\], \[D\])
     * lbl  --  Label, can be an instruction label, or a data label
-
+```
 
 ## Instruction Set:
 
@@ -26,11 +27,11 @@ Operand Types:
         - MOV reg, nr
         - MOV reg, reg
         - MOV reg, ptr
-        - MOV reg, addr
+        - MOV reg, adr
         - MOV ptr, nr
         - MOV ptr, reg
-        - MOV addr, nr
-        - MOV addr, reg
+        - MOV adr, nr
+        - MOV adr, reg
 
     * DB/DEF data, lbl*  --  Defines the initial data that will be used in the Runtime phase. The label is optional, and it creates a refference to the beginning of the data, also called data label. (A data label MUST be defined before it is used, unlike instruction labels that can be defined anywhere throughout the code)
         - DEF str, lbl
@@ -48,31 +49,31 @@ Operand Types:
         - ADD reg, nr
         - ADD reg, reg
         - ADD reg, ptr
-        - ADD reg, addr
+        - ADD reg, adr
     
     * SUB dest, src  --  Subtracts from src the value of the dest
         - SUB reg, nr
         - SUB reg, reg
         - SUB reg, ptr
-        - SUB reg, addr
+        - SUB reg, adr
     
     * MULT dest, src  --  Multiplies the src the value of the dest
         - MULT reg, nr
         - MULT reg, reg
         - MULT reg, ptr
-        - MULT reg, addr
+        - MULT reg, adr
     
     * DIV dest, src  --  Divides the src with value of the dest and saves the quotient into src
         - DIV reg, nr
         - DIV reg, reg
         - DIV reg, ptr
-        - DIV reg, addr
+        - DIV reg, adr
     
     * MOD dest, src  --  Divides the src the value of the dest and saves the remainder into src
         - MOD reg, nr
         - MOD reg, reg
         - MOD reg, ptr
-        - MOD reg, addr
+        - MOD reg, adr
     
     * INC dest  --  Increments the value of dest with 1
         - INC reg
@@ -89,19 +90,19 @@ Operand Types:
         - AND reg, nr
         - AND reg, reg
         - AND reg, ptr
-        - AND reg, addr
+        - AND reg, adr
     
     * OR dest, src  --  Or operation to src with dest
         - OR reg, nr
         - OR reg, reg
         - OR reg, ptr
-        - OR reg, addr
+        - OR reg, adr
     
     * XOR dest, src  --  Xor operation to src with dest
         - XOR reg, nr
         - XOR reg, reg
         - XOR reg, ptr
-        - XOR reg, addr
+        - XOR reg, adr
     
     * NOT dest  --  Inverses the bits of the dest
         - NOT reg
@@ -169,7 +170,7 @@ Operand Types:
         - PUSH nr
         - PUSH reg
         - PUSH ptr
-        - PUSH addr
+        - PUSH adr
 
     * POP dest/src  --  Pops the last value(s) from the stack
         - POP reg  --  pops the stack into the reg (dest)
@@ -183,10 +184,10 @@ Operand Types:
         - STW reg, nr
         - STW reg, reg
 
-    * CALL lbl  --  Pushes into the stack the next instruction address, then jumps to the label
+    * CALL lbl  --  Pushes into the stack the next instruction adress, then jumps to the label
         - CALL lbl
 
-    * RET  --  Pops the stack and returns to the address given by the poped value. Has no parameters
+    * RET  --  Pops the stack and returns to the adress given by the poped value. Has no parameters
         - RET
 
 8. IO Instructions:
