@@ -1,0 +1,85 @@
+# Selection sort
+
+DEF 0, v_i
+DEF 0, v_j
+
+DEF "51423", v
+DEF 0
+DEF 5, len
+
+# B <-- temp
+# C <-- i
+# D <-- j
+main:
+	CALL print	# afisare vector initial
+
+	# afisare new_line:
+	OUTC 0x0D	# afisare \r
+	OUTC 0x0A	# afisare \n
+
+	CALL sort	# apel functie de sortare
+	CALL print	# afisare vector sortat
+	HLT		# iesire din program
+
+
+# sorteaza vectorul v
+sort:
+	MOV C, 0	# i = 0;
+
+.for_i:	
+	MOV A, C	# A = i - len;
+	SUB A, [len]
+	JGEZ A, .end_for_i	# i >= len => .end_for_i, altfel continua
+	
+	MOV D, C	# j = i + 1;
+	ADD D, 1
+
+.for_j:
+	MOV A, D	# A = j - len; 
+	SUB A, [len]
+	JGEZ A, .end_for_j	# j >= len => .end_for_j, altfel continua
+
+	ADD C, v	# C = i + v
+	ADD D, v	# D = j + v
+
+	MOV A, [C]	# A = v[i] - v[j]
+	SUB A, [D]
+	JLEZ A, .end_if	 # sort asc, daca v[i] <= v[j] => ok, altfel interschimba
+	#JGEZ A, .end_if # sort desc
+
+	# interschimbare valori:
+	MOV B, [C]	# temp = v[i];
+
+	MOV A, [D] 	# v[i] = v[j];
+	MOV [C], A
+
+	MOV [D], B	# v[j] = temp;
+
+.end_if:
+	SUB C, v	# C = i
+	SUB D, v	# D = j	
+
+	INC D		# j++;
+	JMP .for_j
+
+.end_for_j:
+	INC C		# i++;
+	JMP .for_i
+
+.end_for_i:
+	RET
+
+
+# afisare text (seamana cu algoritmul HelloWorld)
+print:
+	MOV A, v
+
+.print_loop:
+	MOV B, [A]
+	JZ B, .end_print_loop
+	OUTC B
+	INC A
+	JMP .print_loop
+
+.end_print_loop:
+	RET

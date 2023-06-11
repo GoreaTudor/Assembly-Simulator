@@ -1,0 +1,33 @@
+# Aduna doua numere prin apel de functie:
+
+DB 12, x1 	# primul numar
+DB 23, x2 	# al doilea numar
+
+main:
+	PUSH [x2] 	# impinge al doilea numar in stiva
+	PUSH [x1] 	# impinge primul numar in stiva
+	CALL add_2_numbers 	# apel catre functia sum
+	POP 2 		# scoate cele 2 numere din stiva
+	OUTD A 		# afiseaza valoarea returnata
+	HLT 		# iesire din program
+
+add_2_numbers:
+	PUSH B 		# salveaza registrii
+	PUSH C
+	PUSH D
+
+	# valorile din stiva: D, C, B, adresa_return, x1, x2
+	# SP puncteaza catre ultima valoare din stiva.
+	# pentru a ajunge la parametri, vom cauta in stiva
+	# la o anumita distanta de SP
+	# astfel avem: SP-0 = D, SP-1 = C, SP-2 = B
+	# SP-3 = adresa_return, SP-4 = x1, SP-5 = x2
+
+	STR A, 4 	# A va fi primul parametru, la distanta -4
+	STR B, 5 	# B va fi al doilea parametru, la distanta -5
+	ADD A, B 	# aduna in A valoarea lui B
+
+	POP D 		# restabilire valori registrii
+	POP C
+	POP B
+	RET 		# intoarcere la functia apelanta

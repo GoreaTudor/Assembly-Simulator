@@ -1,0 +1,57 @@
+# Afisare elementul n al sirului Fibonacci
+# n:       0, 1, 2, 3, 4, 5, 6,  7,  8,  9, 10
+# fibo(n): 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55
+
+DEF 6, n
+
+main:
+	PUSH [n] 	# pozitia pentru care dorim sa calculam valoarea
+	CALL fibo 	# apel de functie
+	POP 1 		# scoaterea parametrului din stiva
+	OUTD A 		# afisare valoare returnata
+	HLT 		# iesire din program
+
+fibo:
+	PUSH B # salvare registrii
+	PUSH C
+	# cum nu am folosit registrul D inauntrul functiei,
+	# nu am salvat acest registru
+
+	STR B, 3 # stiva: C, B, ret, param1
+	# SP-0 = C, SP-1 = B, SP-2 = ret, SP-3 = param1
+
+	# daca n == 0 returneza 0
+	JZ B, .fibo_0
+
+	# daca n == 1 returneaza 1
+	DEC B 		# refacem ecuatia ca n-1 == 0
+	JZ B, .fibo_1
+
+	# n >= 2 ==> apeluri recursive, B = n-1
+	PUSH B
+	CALL fibo 	# apel fibo(n-1)
+	POP 1
+	MOV C, A 	# C = fibo(n-1)
+
+	DEC B
+	PUSH B
+	CALL fibo 	# apel fibo(n-2)
+	POP 1
+	ADD C, A 	# C = fibo(n-1) + fibo(n-2)
+
+	MOV A, C 	# preparare pentru returnare
+	JMP .fibo_end
+
+.fibo_0: 	# return 0
+	MOV A, 0
+	JMP .fibo_end
+
+.fibo_1: 	# return 1
+	MOV A, 1
+	JMP .fibo_end
+
+.fibo_end:
+	POP C 	# restaurarea registrilor
+	POP B
+	RET 	# returnare la functia apelanta
+# end fibo

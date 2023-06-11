@@ -1,0 +1,94 @@
+# Template string, schimba fiecare '?' cu urmatorul parametru:
+
+# Templates:
+DEF "Now ? are ? a ?.", template1
+DEF 0
+
+DEF "? have been ?.", template2
+DEF 0
+
+# Replacements:
+DEF "we", str1_1
+DEF 0
+
+DEF "you", str1_2
+DEF 0
+
+
+DEF "making", str2_1
+DEF 0
+
+DEF "walking", str2_2
+DEF 0
+
+DEF "singing", str2_3
+DEF 0
+
+
+DEF "sandwich", str3_1
+DEF 0
+
+DEF "dog", str3_2
+DEF 0
+
+DEF "song", str3_3
+DEF 0
+
+.main:
+	# se trimit parametrii in ordine inversa
+	PUSH str3_1	# 4 - str 3
+	PUSH str2_1	# 3 - str 2
+	PUSH str1_2	# 2 - str 1
+	PUSH template1	# 1 - template
+	CALL .printer	# apel functie
+	POP 3		# golire parametrii din stiva
+	HLT		# oprire program
+
+
+.printer:
+	STR A, 1	# param 1 -> adresa template
+	STW A, -1	# -1 - pointer la template (variabila locala)
+	
+	MOV A, 2	# param 2 -> ... 
+	STW A, -2	# -2 - contor parametrii (variabila locala)
+
+before_loop_template:
+	STR A, -1	# revenire la pointerul pt template
+
+loop_template:
+	MOV B, [A]	# A - pointer, B - caracterul la adresa A
+
+	JZ B, end	# daca B este null => end (finished template)
+
+	SUB B, '?'	# daca B == '?' => if_template
+	JZ B, if_template
+	ADD B, '?'	# repara valoarea
+
+	OUTC B		# afiseaza caracter
+	INC A		# incrementeaza pointer template
+	JMP loop_template
+
+if_template:
+	INC A		# ignora simbolul '?'
+	STW A, -1	# seteaza pointer template
+	JMP before_loop_param
+
+before_loop_param:
+	STR C, -2	# obtine contorul parametrilor
+	STR A, C	# obtine adresa urmatorului parametru
+
+loop_param:
+	MOV B, [A]	# A - pointer, B - caracterul la adresa A
+	JZ B, if_param	# if B is null, go back to prev loop
+
+	OUTC B		# daca B nu este null, atunci afiseaza caracter
+	INC A		# obtine urmatorul caracter
+	JMP loop_param
+
+if_param:
+	INC C		# incrementare contor
+	STW C, -2	# obtine urmatorul parametru
+	JMP before_loop_template
+
+end:
+	RET		# revenire la functia apelanta

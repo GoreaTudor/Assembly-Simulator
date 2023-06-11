@@ -1,0 +1,22 @@
+# Afisare text folosind apeluri de functie:
+
+DEF "Hello World!", hello
+DEF 0
+
+main:	PUSH hello		# trimite adresa textului ca parametru
+	CALL display_string	# apel functie de afisare
+	POP 1			# curatare stiva
+	HLT			# oprire program
+
+
+display_string:
+	STR A, 1	# A va contine adresa textului
+
+loop:	MOV B, [A]	# B este valoarea de la adresa A
+	JZ B, end	# daca (B == 0) -> end
+	OUTC B		# afisare (caracter) B
+	INC A		# incrementare A
+	JMP loop	# salt inapoi la loop
+
+end:	RET		# revenire la functia apelanta
+	

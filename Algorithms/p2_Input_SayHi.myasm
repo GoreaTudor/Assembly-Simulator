@@ -1,0 +1,23 @@
+# Afisare text + input:
+
+DEF "Hello, ", hello
+DEF 0
+
+main:
+	MOV A, hello	# A := adresa textului
+
+# afisare text predefinit:
+loop1:	MOV B, [A]	# B := caracterul la adresa A
+	JZ B, loop2	# daca B este null => loop2
+	OUTC B		# afisare caracter B
+	INC A		# incrementare A
+	JMP loop1	# salt la loop1
+
+# citire input (pana la null) si afisare:
+loop2:	INP A		# citire caracter si salvare in A
+	JZ A, end	# daca A este null => end
+	OUTC A		# display value
+	JMP loop2	# salt la loop2
+
+end:	HLT		# iesire din program
+	

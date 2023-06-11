@@ -1,0 +1,16 @@
+# Primul program in MyASM:
+
+DEF "Hello, World!", hello	# textul care va fi afisat
+DEF 0 				# caracterul null de la finalul textului
+
+MOV A, hello # A va retine adresa textului
+
+loop:
+	MOV B, [A] 	# B = [A], B reprezinta valoarea la adresa A
+	JZ B, end 	# daca (B == 0) -> end
+	OUTC B 		# afisare (caracter) B
+	INC A 		# incrementare A
+	JMP loop 	# salt inapoi la loop
+
+end:
+	HLT 		# iesire din program
