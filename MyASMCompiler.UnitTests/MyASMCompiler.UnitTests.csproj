@@ -54,7 +54,6 @@
   <ItemGroup>
     <Compile Include="CompilerChild.cs" />
     <Compile Include="CompilerTests.cs" />
-    <Compile Include="DebuggerTests.cs" />
     <Compile Include="InstructionTests\ArithmeticTests.cs" />
     <Compile Include="InstructionTests\IOTests.cs" />
     <Compile Include="InstructionTests\JumpTests.cs" />

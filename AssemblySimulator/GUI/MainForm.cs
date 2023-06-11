@@ -209,6 +209,8 @@ namespace AssemblySimulator.GUI {
 
         private void worker_RunWorkerCompleted (object sender, RunWorkerCompletedEventArgs e) {
             IsPaused = true;
+            this.btn_reset.Enabled = true;  // re-enable reset button after stopping
+
             if (e.Cancelled) {
                 log ("Paused");
 
@@ -244,6 +246,8 @@ namespace AssemblySimulator.GUI {
             log ("Starting...");
             if (! IsBuilt) { log ("<Start>: Project not built"); return; }
             if (! IsPaused) { log ("<Start>: Process not paused"); return; }
+
+            this.btn_reset.Enabled = false; // disable reset button while running
 
             if (!Runtime.IsProcessRunning) {
                 string input = this.txt_input.Text;
@@ -319,7 +323,7 @@ namespace AssemblySimulator.GUI {
 
         #region Console
         private void clearConsole () => this.txt_console.Text = $"> {DateTime.Now}: Console cleared.\r\n";
-        private void showBuiltCode () => log (this.compiledCode.ToString());
+        private void showBuiltCode () => log ((compiledCode == null) ? "No built code." : compiledCode.ToString());
         #endregion
 
 

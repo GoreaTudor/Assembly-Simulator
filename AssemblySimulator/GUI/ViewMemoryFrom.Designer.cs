@@ -39,11 +39,13 @@ namespace AssemblySimulator.GUI {
             this.radio_StackDec = new System.Windows.Forms.RadioButton();
             this.radio_StackBin = new System.Windows.Forms.RadioButton();
             this.panel_memory = new System.Windows.Forms.Panel();
+            this.txt_MemorySearch = new System.Windows.Forms.TextBox();
             this.radio_MemoryAscii = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.radio_StackAscii = new System.Windows.Forms.RadioButton();
-            this.txt_MemorySearch = new System.Windows.Forms.TextBox();
             this.txt_StackSearch = new System.Windows.Forms.TextBox();
+            this.radio_StackAscii = new System.Windows.Forms.RadioButton();
+            this.lbl_memory0x = new System.Windows.Forms.Label();
+            this.lbl_stack0x = new System.Windows.Forms.Label();
             this.panel_memory.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -114,10 +116,10 @@ namespace AssemblySimulator.GUI {
             // 
             // txt_MemoryResult
             // 
-            this.txt_MemoryResult.Location = new System.Drawing.Point(3, 428);
+            this.txt_MemoryResult.Location = new System.Drawing.Point(7, 428);
             this.txt_MemoryResult.Name = "txt_MemoryResult";
             this.txt_MemoryResult.ReadOnly = true;
-            this.txt_MemoryResult.Size = new System.Drawing.Size(200, 27);
+            this.txt_MemoryResult.Size = new System.Drawing.Size(196, 27);
             this.txt_MemoryResult.TabIndex = 8;
             // 
             // txt_stack
@@ -144,10 +146,10 @@ namespace AssemblySimulator.GUI {
             // 
             // txt_StackResult
             // 
-            this.txt_StackResult.Location = new System.Drawing.Point(3, 431);
+            this.txt_StackResult.Location = new System.Drawing.Point(7, 431);
             this.txt_StackResult.Name = "txt_StackResult";
             this.txt_StackResult.ReadOnly = true;
-            this.txt_StackResult.Size = new System.Drawing.Size(200, 27);
+            this.txt_StackResult.Size = new System.Drawing.Size(196, 27);
             this.txt_StackResult.TabIndex = 11;
             // 
             // btn_StackSearch
@@ -194,6 +196,7 @@ namespace AssemblySimulator.GUI {
             // 
             // panel_memory
             // 
+            this.panel_memory.Controls.Add(this.lbl_memory0x);
             this.panel_memory.Controls.Add(this.txt_MemorySearch);
             this.panel_memory.Controls.Add(this.radio_MemoryAscii);
             this.panel_memory.Controls.Add(this.lbl_memory);
@@ -208,6 +211,13 @@ namespace AssemblySimulator.GUI {
             this.panel_memory.Size = new System.Drawing.Size(213, 555);
             this.panel_memory.TabIndex = 17;
             // 
+            // txt_MemorySearch
+            // 
+            this.txt_MemorySearch.Location = new System.Drawing.Point(36, 462);
+            this.txt_MemorySearch.Name = "txt_MemorySearch";
+            this.txt_MemorySearch.Size = new System.Drawing.Size(86, 27);
+            this.txt_MemorySearch.TabIndex = 10;
+            // 
             // radio_MemoryAscii
             // 
             this.radio_MemoryAscii.AutoSize = true;
@@ -221,6 +231,7 @@ namespace AssemblySimulator.GUI {
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lbl_stack0x);
             this.panel1.Controls.Add(this.txt_StackSearch);
             this.panel1.Controls.Add(this.radio_StackAscii);
             this.panel1.Controls.Add(this.lbl_stack);
@@ -235,6 +246,13 @@ namespace AssemblySimulator.GUI {
             this.panel1.Size = new System.Drawing.Size(213, 555);
             this.panel1.TabIndex = 18;
             // 
+            // txt_StackSearch
+            // 
+            this.txt_StackSearch.Location = new System.Drawing.Point(36, 464);
+            this.txt_StackSearch.Name = "txt_StackSearch";
+            this.txt_StackSearch.Size = new System.Drawing.Size(86, 27);
+            this.txt_StackSearch.TabIndex = 11;
+            // 
             // radio_StackAscii
             // 
             this.radio_StackAscii.AutoSize = true;
@@ -246,19 +264,23 @@ namespace AssemblySimulator.GUI {
             this.radio_StackAscii.Text = "ASCII";
             this.radio_StackAscii.UseVisualStyleBackColor = true;
             // 
-            // txt_MemorySearch
+            // lbl_memory0x
             // 
-            this.txt_MemorySearch.Location = new System.Drawing.Point(3, 462);
-            this.txt_MemorySearch.Name = "txt_MemorySearch";
-            this.txt_MemorySearch.Size = new System.Drawing.Size(119, 27);
-            this.txt_MemorySearch.TabIndex = 10;
+            this.lbl_memory0x.AutoSize = true;
+            this.lbl_memory0x.Location = new System.Drawing.Point(3, 467);
+            this.lbl_memory0x.Name = "lbl_memory0x";
+            this.lbl_memory0x.Size = new System.Drawing.Size(27, 20);
+            this.lbl_memory0x.TabIndex = 11;
+            this.lbl_memory0x.Text = "0x";
             // 
-            // txt_StackSearch
+            // lbl_stack0x
             // 
-            this.txt_StackSearch.Location = new System.Drawing.Point(3, 464);
-            this.txt_StackSearch.Name = "txt_StackSearch";
-            this.txt_StackSearch.Size = new System.Drawing.Size(119, 27);
-            this.txt_StackSearch.TabIndex = 11;
+            this.lbl_stack0x.AutoSize = true;
+            this.lbl_stack0x.Location = new System.Drawing.Point(3, 467);
+            this.lbl_stack0x.Name = "lbl_stack0x";
+            this.lbl_stack0x.Size = new System.Drawing.Size(27, 20);
+            this.lbl_stack0x.TabIndex = 12;
+            this.lbl_stack0x.Text = "0x";
             // 
             // ViewMemoryFrom
             // 
@@ -301,5 +323,7 @@ namespace AssemblySimulator.GUI {
         private System.Windows.Forms.RadioButton radio_StackAscii;
         private System.Windows.Forms.TextBox txt_MemorySearch;
         private System.Windows.Forms.TextBox txt_StackSearch;
+        private System.Windows.Forms.Label lbl_memory0x;
+        private System.Windows.Forms.Label lbl_stack0x;
     }
 }

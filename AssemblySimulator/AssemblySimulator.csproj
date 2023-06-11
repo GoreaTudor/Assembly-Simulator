@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Global.cs" />
     <Compile Include="GUI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,7 +61,6 @@
     <Compile Include="GUI\ViewMemoryFrom.Designer.cs">
       <DependentUpon>ViewMemoryFrom.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\Masks.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\MainForm.resx">

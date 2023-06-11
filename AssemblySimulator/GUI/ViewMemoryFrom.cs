@@ -96,26 +96,29 @@ namespace AssemblySimulator.GUI {
 
         private void searchValue (TextBox textBox, int[] values, string position, bool ascii, bool hex, bool dec, bool bin) {
             // validate position & get value
-            int pos;
-            try { pos = Convert.ToInt32 (value: position, fromBase: 16); } 
-            catch (Exception e) { textBox.Text = "Invalid Position"; return; }
+            int pos, val;
+            try { 
+                pos = Convert.ToInt32 (value: position, fromBase: 16);
 
-            int val = values[pos];
+                val = values[pos]; // can throw IndexOutOfRangeException
 
-            // display value
-            if (ascii) {
-                try { textBox.Text = ((char) val).ToString(); } 
-                catch (Exception e) { textBox.Text = "Too big for ASCII"; }
+                // display value
+                if (ascii) {
+                    try { textBox.Text = ((char) val).ToString (); } catch (Exception e) { textBox.Text = "Invalid for ASCII"; }
 
-            } else if (dec) {
-                textBox.Text = val.ToString ();
+                } else if (dec) {
+                    textBox.Text = val.ToString ();
 
-            } else if (bin) {
-                textBox.Text = Convert.ToString (value: val, toBase: 2);
+                } else if (bin) {
+                    textBox.Text = Convert.ToString (value: val, toBase: 2);
 
-            } else { // hex by default
-                textBox.Text = Convert.ToString (value: val, toBase: 16);
+                } else { // hex by default
+                    textBox.Text = Convert.ToString (value: val, toBase: 16);
+                }
+
+            } catch (Exception e) { 
+                textBox.Text = "Invalid Position"; return; 
             }
-        } 
+        }
     }
 }
